@@ -68,6 +68,8 @@ public class InterfaceFactory implements Listener {
 
             item.setItemMeta(im);
         }
+
+        inventory = inv;
     }
 
     public Inventory getInventory() {
