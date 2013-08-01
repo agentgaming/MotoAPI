@@ -2,3 +2,4 @@ name: MotoAPI
 main: com.mike724.motoapi.MotoAPI
 version: ${version}
 authors: [Mike724, Dakota628]
+depend: [MotoLoader]
