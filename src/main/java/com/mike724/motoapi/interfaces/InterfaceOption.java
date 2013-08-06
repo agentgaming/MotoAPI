@@ -12,6 +12,6 @@ public @interface InterfaceOption {
     public String name();
     public String description();
     public int itemId();
-    public byte itemData() default 0;
+    public int itemData() default 0;
     public boolean toggleable() default false;
 }
