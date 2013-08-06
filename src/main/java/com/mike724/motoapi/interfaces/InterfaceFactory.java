@@ -33,7 +33,7 @@ public class InterfaceFactory implements Listener {
 
         int maxSlot = 0;
 
-        for(Method m : interfaceClass.getMethods()) {
+        for(Method m : interfaceClass.getDeclaredMethods()) {
             InterfaceOption io = m.getAnnotation(InterfaceOption.class);
             if(Modifier.isStatic(m.getModifiers()) && m.getParameterTypes()[0].equals(InterfaceClick.class) && io != null) {
                 m.setAccessible(true);
@@ -43,7 +43,7 @@ public class InterfaceFactory implements Listener {
             }
         }
 
-        inventorySize = (int) Math.ceil(maxSlot / 8.0) * 8;
+        inventorySize = (int) (Math.ceil(maxSlot / 9.0) * 9.0);
 
         refreshInterface();
 
@@ -55,17 +55,19 @@ public class InterfaceFactory implements Listener {
 
         for(Integer i : options.keySet()) {
             InterfaceOption io = options.get(i);
-            ItemStack item = new ItemStack(io.itemId(), 1, (short) 0, io.itemData());
+            ItemStack item = new ItemStack(io.itemId(), 1, io.itemData());
 
             ItemMeta im = item.getItemMeta();
             im.setDisplayName(io.name());
 
             ArrayList<String> lore = new ArrayList<>();
             if(io.toggleable()) lore.add(enabledOptions.contains(io.slot()) ? ChatColor.GREEN + "Enabled" : ChatColor.RED + "Disabled");
-            lore.add(io.description());
+            lore.add(ChatColor.GRAY + io.description());
             im.setLore(lore);
 
             item.setItemMeta(im);
+
+            inv.setItem(i,item);
         }
 
         inventory = inv;
@@ -88,13 +90,13 @@ public class InterfaceFactory implements Listener {
         if(!(e.getWhoClicked() instanceof Player)) return;
         Player p = (Player) e.getWhoClicked();
 
-        if(e.getInventory().hashCode() == this.getInventory().hashCode()) {
+        if(this.getInventory().getViewers().contains(p)) {
             if(options.containsKey(e.getRawSlot()) && methods.containsKey(e.getRawSlot())) {
                 boolean enabled = false;
                 if(options.get(e.getRawSlot()).toggleable()) {
                     if(enabledOptions.contains(e.getRawSlot())) {
                         enabled = false;
-                        enabledOptions.remove(e.getRawSlot());
+                        enabledOptions.remove(new Integer(e.getRawSlot()));
                         setEnabled(e.getCurrentItem(),false);
                     } else {
                         enabled = true;
