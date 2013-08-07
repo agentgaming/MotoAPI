@@ -3,6 +3,7 @@ package com.mike724.motoapi.interfaces;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
@@ -18,6 +19,7 @@ import java.util.HashMap;
 public class InterfaceFactory implements Listener {
     private JavaPlugin plugin;
     private String interfaceName;
+    private EventPriority eventPriority;
 
     private int inventorySize;
     private Inventory inventory;
@@ -28,8 +30,13 @@ public class InterfaceFactory implements Listener {
     private HashMap<Integer,Method> methods = new HashMap<Integer,Method>();
 
     public InterfaceFactory(JavaPlugin plugin, Class interfaceClass, String interfaceName) {
+        this(plugin, interfaceClass, interfaceName, EventPriority.NORMAL);
+    }
+
+    public InterfaceFactory(JavaPlugin plugin, Class interfaceClass, String interfaceName, EventPriority eventPriority) {
         this.plugin = plugin;
         this.interfaceName = interfaceName;
+        this.eventPriority = eventPriority;
 
         int maxSlot = 0;
 
@@ -85,7 +92,48 @@ public class InterfaceFactory implements Listener {
         item.setItemMeta(im);
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void monitorPriority(InventoryClickEvent e) {
+        if(eventPriority == EventPriority.MONITOR) {
+            handleClick(e);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void highestPriority(InventoryClickEvent e) {
+        if(eventPriority == EventPriority.HIGHEST) {
+            handleClick(e);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGH)
+    public void highPriority(InventoryClickEvent e) {
+        if(eventPriority == EventPriority.HIGH) {
+            handleClick(e);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void normalPriority(InventoryClickEvent e) {
+        if(eventPriority == EventPriority.NORMAL) {
+            handleClick(e);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void lowPriority(InventoryClickEvent e) {
+        if(eventPriority == EventPriority.LOW) {
+            handleClick(e);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void lowestPriority(InventoryClickEvent e) {
+        if(eventPriority == EventPriority.LOWEST) {
+            handleClick(e);
+        }
+    }
+
     public void handleClick(InventoryClickEvent e) {
         if(!(e.getWhoClicked() instanceof Player)) return;
         Player p = (Player) e.getWhoClicked();
