@@ -6,10 +6,15 @@ import org.bukkit.event.HandlerList;
 public class MotoPushEvent extends Event{
     private static final HandlerList handlers = new HandlerList();
     private MotoPushData data;
-    private boolean cancelled;
+    private String command;
 
-    public MotoPushEvent(MotoPushData data) {
+    public MotoPushEvent(String command, MotoPushData data) {
         this.data = data;
+        this.command = command;
+    }
+
+    public String getCommand() {
+        return command;
     }
 
     public MotoPushData getPushData() {
