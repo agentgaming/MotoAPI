@@ -32,7 +32,9 @@ public class MotoPush {
             String line;
             try {
                 while ((line = is.readLine()) != null) {
-                    String data = Security.decrypt(new String(Base64.decode(line)),"9612/n1utzle//pa");
+                    String data = new String(Base64.decode(line));
+                    System.out.println(data.length() + " " + "9612/n1utzle//pa".length());
+                    data = Security.decrypt(data,"9612/n1utzle//pa");
                     MotoPushData mpd = gson.fromJson(data,MotoPushData.class);
                     if(mpd != null) MotoAPI.getInstance().getServer().getPluginManager().callEvent(new MotoPushEvent(mpd));
                 }
