@@ -15,7 +15,7 @@ public class MotoPush {
     private Gson gson = new Gson();
 
     public MotoPush() throws IOException {
-        socket = new Socket("http://agentgaming.net/", 8114);
+        socket = new Socket("agentgaming.net", 8114);
         os = new PrintStream(socket.getOutputStream());
         is = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         new Thread(handleMessages).start();

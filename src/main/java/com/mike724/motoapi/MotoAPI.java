@@ -12,12 +12,7 @@ public class MotoAPI extends JavaPlugin {
 	@Override
 	public void onEnable() {
         instance = this;
-        try {
-            storage = new Storage();
-        } catch (Exception e) {
-            e.printStackTrace();
-            killServer();
-        }
+
         this.getLogger().info("MotoAPI Enabled");
 	}
 	
@@ -28,10 +23,6 @@ public class MotoAPI extends JavaPlugin {
 
     public void killServer() {
         Bukkit.shutdown();
-    }
-
-    public Storage getStorage() {
-        return storage;
     }
 
     public static MotoAPI getInstance() {
