@@ -21,8 +21,10 @@ public class MotoPush {
     }
 
     public void push(MotoPushData data) {
-        String json = Security.encrypt(new String(gson.toJson(data).getBytes()),"9612/n1utzle//pa");
-        os.println(json);
+        try {
+            String json = Security.encrypt(new String(gson.toJson(data).getBytes()), "9612/n1utzle//pa");
+            os.println(json);
+        } catch (Exception e) {}
     }
 
     Runnable handleMessages = new Runnable() {
@@ -39,6 +41,7 @@ public class MotoPush {
                 }
             } catch (IOException e) {
                 e.printStackTrace();
+            } catch (Exception e) {
             }
         }
     };
