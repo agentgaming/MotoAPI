@@ -22,7 +22,7 @@ public class MotoPush {
     }
 
     public void push(MotoPushData data) {
-        String json = Security.encrypt(new String(Base64.encode(gson.toJson(data).getBytes())),"9612/n1utzle//pa");
+        String json = Security.encrypt(new String(Base64.encode(gson.toJson(data).getBytes())),"9612/n1utzle/pa");
         os.println(json);
     }
 
@@ -32,7 +32,7 @@ public class MotoPush {
             String line;
             try {
                 while ((line = is.readLine()) != null) {
-                    String data = Security.decrypt(new String(Base64.decode(line)),"9612/n1utzle//pa");
+                    String data = Security.decrypt(new String(Base64.decode(line)),"9612/n1utzle/pa");
                     MotoPushData mpd = gson.fromJson(data,MotoPushData.class);
                     if(mpd != null) MotoAPI.getInstance().getServer().getPluginManager().callEvent(new MotoPushEvent(mpd));
                 }
