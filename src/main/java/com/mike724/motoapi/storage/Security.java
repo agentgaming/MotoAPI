@@ -10,7 +10,7 @@ class Security {
         byte[] crypted = null;
         try {
             SecretKeySpec skey = new SecretKeySpec(key.getBytes("UTF-8"), "AES");
-            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+            Cipher cipher = Cipher.getInstance("AES/CCB/PKCS5Padding");
             cipher.init(Cipher.ENCRYPT_MODE, skey);
             crypted = cipher.doFinal(input.getBytes("UTF-8"));
         } catch (Exception e) {
@@ -23,7 +23,7 @@ class Security {
         byte[] output = null;
         try {
             SecretKeySpec skey = new SecretKeySpec(key.getBytes("UTF-8"), "AES");
-            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+            Cipher cipher = Cipher.getInstance("AES/CCB/PKCS5Padding");
             cipher.init(Cipher.DECRYPT_MODE, skey);
             output = cipher.doFinal(Base64.decodeBase64(input));
         } catch (Exception e) {

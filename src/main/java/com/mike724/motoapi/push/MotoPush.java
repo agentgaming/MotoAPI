@@ -2,7 +2,6 @@ package com.mike724.motoapi.push;
 
 import com.google.gson.Gson;
 import com.mike724.motoapi.MotoAPI;
-import net.minecraft.v1_6_R2.org.bouncycastle.util.encoders.Base64;
 
 import java.io.*;
 import java.net.Socket;
@@ -22,7 +21,7 @@ public class MotoPush {
     }
 
     public void push(MotoPushData data) {
-        String json = Security.encrypt(new String(Base64.encode(gson.toJson(data).getBytes())),"9612/n1utzle//pa");
+        String json = Security.encrypt(new String(gson.toJson(data).getBytes()),"9612/n1utzle//pa");
         os.println(json);
     }
 
@@ -32,7 +31,7 @@ public class MotoPush {
             String line;
             try {
                 while ((line = is.readLine()) != null) {
-                    String data = new String(Base64.decode(line));
+                    String data = new String(line);
                     System.out.println(data.length() + " " + "9612/n1utzle//pa".length());
                     data = Security.decrypt(data,"9612/n1utzle//pa");
                     MotoPushData mpd = gson.fromJson(data,MotoPushData.class);
