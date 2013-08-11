@@ -24,7 +24,9 @@ public class MotoPush {
         try {
             String json = Security.encrypt(new String(gson.toJson(data).getBytes()), "9612/n1utzle//pa");
             os.println(json);
-        } catch (Exception e) {}
+        //if this exception is called the data is not valid so ignore it
+        } catch (Exception ignored) {
+        }
     }
 
     Runnable handleMessages = new Runnable() {
@@ -40,6 +42,7 @@ public class MotoPush {
                 }
             } catch (IOException e) {
                 e.printStackTrace();
+                //if this exception is called the data is not valid so ignore it
             } catch (Exception e) {
             }
         }
