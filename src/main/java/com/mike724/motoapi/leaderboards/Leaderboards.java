@@ -13,11 +13,11 @@ public class Leaderboards {
         }
     }
 
-    public Leaderboard getLeaderboard(String type, String name) {
-        return (Leaderboard) storage.getObject(Leaderboard.class, type + ":" + name);
+    public Leaderboard getLeaderboard(String type) {
+        return (Leaderboard) storage.getObject(Leaderboard.class, type);
     }
 
-    public void saveLeaderboard(String type, Leaderboard l) {
-        storage.writeObject((Object) l, type + ":" + l.getName());
+    public void saveLeaderboard(Leaderboard l) {
+        storage.writeObject((Object) l, l.getName());
     }
 }
