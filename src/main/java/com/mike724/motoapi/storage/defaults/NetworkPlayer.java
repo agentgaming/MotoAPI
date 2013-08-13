@@ -9,6 +9,7 @@ public class NetworkPlayer {
     private boolean isOnline;
     private NetworkRank rank;
     private long joinDate;
+    private String currentIP;
     private ArrayList<String> friends;
 
     public NetworkPlayer(String player, Boolean isBanned, Boolean isOnline, NetworkRank rank, long joinDate) {
@@ -17,6 +18,7 @@ public class NetworkPlayer {
         this.isOnline = isOnline;
         this.rank = rank;
         this.joinDate = joinDate;
+        this.currentIP = "";
     }
 
     public NetworkPlayer(String player) {
@@ -61,6 +63,14 @@ public class NetworkPlayer {
 
     public void addFriend(String p) {
         friends.add(p);
+    }
+
+    public String getCurrentIP() {
+        return currentIP;
+    }
+
+    public void setCurrentIP(String currentIP) {
+        this.currentIP = currentIP;
     }
 
     public ArrayList<String> getFriends() {
