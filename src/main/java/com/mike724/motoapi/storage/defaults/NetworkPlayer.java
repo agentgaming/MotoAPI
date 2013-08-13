@@ -1,5 +1,7 @@
 package com.mike724.motoapi.storage.defaults;
 
+import java.util.ArrayList;
+
 @SuppressWarnings("unused")
 public class NetworkPlayer {
     private final String player;
@@ -7,6 +9,7 @@ public class NetworkPlayer {
     private boolean isOnline;
     private NetworkRank rank;
     private long joinDate;
+    private ArrayList<String> friends;
 
     public NetworkPlayer(String player, Boolean isBanned, Boolean isOnline, NetworkRank rank, long joinDate) {
         this.player = player;
@@ -54,5 +57,13 @@ public class NetworkPlayer {
 
     public void setJoinDate(long joinDate) {
         this.joinDate = joinDate;
+    }
+
+    public void addFriend(String p) {
+        friends.add(p);
+    }
+
+    public ArrayList<String> getFriends() {
+        return friends;
     }
 }
