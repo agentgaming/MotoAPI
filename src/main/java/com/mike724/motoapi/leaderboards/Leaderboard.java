@@ -2,6 +2,7 @@ package com.mike724.motoapi.leaderboards;
 
 import java.util.ArrayList;
 
+@Deprecated
 public class Leaderboard {
     private String name;
     public ArrayList<LeaderboardData> data;

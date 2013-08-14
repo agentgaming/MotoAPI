@@ -2,6 +2,7 @@ package com.mike724.motoapi.leaderboards;
 
 import com.mike724.motoapi.storage.DataStorage;
 
+@Deprecated
 public class Leaderboards {
     private DataStorage storage;
 

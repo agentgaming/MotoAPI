@@ -3,6 +3,7 @@ package com.mike724.motoapi.leaderboards;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+@Deprecated
 public class LeaderboardData {
     private String player;
     private ArrayList<String> sortKeys;

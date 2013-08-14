@@ -1,12 +1,21 @@
 package com.mike724.motoapi.push;
 
+import com.amazonaws.util.json.JSONArray;
 import com.google.gson.Gson;
 import com.mike724.motoapi.MotoAPI;
+import com.mike724.motoapi.storage.DataStorage;
+import com.mike724.motoapi.storage.HTTPUtils;
+import org.apache.http.NameValuePair;
+import org.apache.http.auth.Credentials;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.message.BasicNameValuePair;
 
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MotoPush {
     private String apiKey;
@@ -47,10 +56,17 @@ public class MotoPush {
 
     public void cmd(String cmd, String... args) {
         String cmdStr = ":" + cmd;
-        for(String s : args) {
-            cmdStr += "," + s;
-        }
+        for(String s : args) cmdStr += "," + s;
         os.println(cmdStr);
+    }
+
+    public JSONArray apiMethod(String method, String... args) {
+        String url = "https://agentgaming.net:8115/" + method;
+        for(String s : args)  url += "/" + s;
+        try {
+            String out = HTTPUtils.basicAuth(url, new UsernamePasswordCredentials("jxBkqvpe0seZhgfavRqB","RXaCcuuQcIUFZuVZik9K"));
+            return new JSONArray(out);
+        } catch (Exception e) { return null; }
     }
 
     Runnable handleMessages = new Runnable() {

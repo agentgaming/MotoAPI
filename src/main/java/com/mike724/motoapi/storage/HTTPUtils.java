@@ -6,6 +6,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.auth.Credentials;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -29,6 +30,21 @@ public class HTTPUtils {
         post.addHeader(authHeader);
         post.setEntity(new UrlEncodedFormEntity(params, "utf-8"));
         HttpResponse resp = client.execute(post);
+        String respString = EntityUtils.toString(resp.getEntity()).trim();
+        return respString;
+    }
+
+    /**
+     * @param url    the url of the HTTP server
+     * @param creds  credentials for basic auth
+     * @return the HTTP response
+     */
+    public static String basicAuth(String url, Credentials creds) throws Exception {
+        HttpClient client = new DefaultHttpClient();
+        HttpGet get = new HttpGet(url);
+        Header authHeader = new BasicScheme().authenticate(creds, get, new BasicHttpContext());
+        get.addHeader(authHeader);
+        HttpResponse resp = client.execute(get);
         String respString = EntityUtils.toString(resp.getEntity()).trim();
         return respString;
     }
