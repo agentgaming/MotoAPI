@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.mike724.motoapi</groupId>
     <artifactId>MotoAPI</artifactId>
-    <version>0.2</version>
+    <version>${env.BUILD_NUMBER}</version>
     <name>MotoAPI</name>
     <url>http://www.mike724.com/</url>
     <repositories>
