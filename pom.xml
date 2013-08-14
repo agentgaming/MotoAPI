@@ -8,11 +8,11 @@
     <repositories>
         <repository>
             <id>bukkit-repo</id>
-            <url>http://repo.bukkit.org/content/groups/public</url>
+            <url>http://repo.bukkit.org/content/groups/public/</url>
         </repository>
         <repository>
             <id>AGNRepo</id>
-            <url>scp://agnmaven@mike724.com/var/lib/jenkins/.m2/repository</url>
+            <url>https://mike724.com/repo/content/repositories/agentgaming-release/</url>
         </repository>
     </repositories>
     <build>
@@ -52,15 +52,17 @@
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
             <version>LATEST</version>
-            <type>jar</type>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.mike724.motoloader</groupId>
             <artifactId>MotoLoader</artifactId>
-            <version>0.1</version>
-            <type>jar</type>
-            <scope>compile</scope>
+            <version>LATEST</version>
         </dependency>
     </dependencies>
+    <distributionManagement>
+        <repository>
+            <id>AGNRepo</id>
+            <url>https://mike724.com/repo/content/repositories/agentgaming-release</url>
+        </repository>
+    </distributionManagement>
 </project>
