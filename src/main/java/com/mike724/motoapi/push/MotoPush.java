@@ -38,11 +38,6 @@ public class MotoPush {
 
         os.println("nXWvOgfgRJKBbbzowle1");
 
-        String line;
-        while ((line = is.readLine()) != null) {
-            if(line.trim() == "authed") break;
-        }
-
         new Thread(handleMessages).start();
     }
 
