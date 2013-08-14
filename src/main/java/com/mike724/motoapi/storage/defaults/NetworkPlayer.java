@@ -6,23 +6,20 @@ import java.util.ArrayList;
 public class NetworkPlayer {
     private final String player;
     private boolean isBanned;
-    private boolean isOnline;
     private NetworkRank rank;
     private long joinDate;
     private String currentIP;
     private ArrayList<String> friends;
 
-    public NetworkPlayer(String player, Boolean isBanned, Boolean isOnline, NetworkRank rank, long joinDate) {
+    public NetworkPlayer(String player, Boolean isBanned, NetworkRank rank, long joinDate) {
         this.player = player;
         this.isBanned = isBanned;
-        this.isOnline = isOnline;
         this.rank = rank;
         this.joinDate = joinDate;
-        this.currentIP = "";
     }
 
     public NetworkPlayer(String player) {
-        this(player, false, false, NetworkRank.USER, System.currentTimeMillis());
+        this(player, false, NetworkRank.USER, System.currentTimeMillis());
     }
 
     public String getPlayer() {
@@ -35,14 +32,6 @@ public class NetworkPlayer {
 
     public void setBanned(boolean banned) {
         isBanned = banned;
-    }
-
-    public boolean isOnline() {
-        return isOnline;
-    }
-
-    public void setOnline(boolean online) {
-        isOnline = online;
     }
 
     public NetworkRank getRank() {
@@ -63,14 +52,6 @@ public class NetworkPlayer {
 
     public void addFriend(String p) {
         friends.add(p);
-    }
-
-    public String getCurrentIP() {
-        return currentIP;
-    }
-
-    public void setCurrentIP(String currentIP) {
-        this.currentIP = currentIP;
     }
 
     public ArrayList<String> getFriends() {
