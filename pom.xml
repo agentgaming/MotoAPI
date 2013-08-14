@@ -56,7 +56,7 @@
         <dependency>
             <groupId>com.mike724.motoloader</groupId>
             <artifactId>MotoLoader</artifactId>
-            <version>LATEST</version>
+            <version>RELEASE</version>
         </dependency>
     </dependencies>
     <distributionManagement>
