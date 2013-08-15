@@ -1,23 +1,19 @@
 package com.mike724.motoapi.push;
 
-import com.amazonaws.util.json.JSONArray;
 import com.amazonaws.util.json.JSONObject;
 import com.google.gson.Gson;
 import com.mike724.motoapi.MotoAPI;
-import com.mike724.motoapi.storage.DataStorage;
 import com.mike724.motoapi.storage.HTTPUtils;
-import org.apache.http.NameValuePair;
-import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.message.BasicNameValuePair;
 import org.bukkit.entity.Player;
 
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
 
 public class MotoPush {
     private String apiKey;
