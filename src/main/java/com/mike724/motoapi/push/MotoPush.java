@@ -10,6 +10,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.message.BasicNameValuePair;
+import org.bukkit.entity.Player;
 
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
@@ -20,18 +21,14 @@ import java.util.List;
 
 public class MotoPush {
     private String apiKey;
-    private Socket socket;
+    private SSLSocket sslSocket;
     private BufferedReader is;
     private PrintStream os;
     private Gson gson = new Gson();
+    private Boolean isConnected = true;
 
     public MotoPush() throws IOException {
-        socket = new Socket("agentgaming.net", 8114);
-        SSLSocket sslSocket = (SSLSocket) ((SSLSocketFactory) SSLSocketFactory.getDefault()).createSocket(
-                socket,
-                socket.getInetAddress().getHostAddress(),
-                socket.getPort(),
-                true);
+        connect();
 
         os = new PrintStream(sslSocket.getOutputStream());
         is = new BufferedReader(new InputStreamReader(sslSocket.getInputStream()));
@@ -39,6 +36,22 @@ public class MotoPush {
         os.println("nXWvOgfgRJKBbbzowle1");
 
         new Thread(handleMessages).start();
+
+        new Thread(ping).start();
+
+    }
+
+    private void connect() throws IOException {
+        Socket socket = new Socket("agentgaming.net", 8114);
+        sslSocket = (SSLSocket) ((SSLSocketFactory) SSLSocketFactory.getDefault()).createSocket(
+                socket,
+                socket.getInetAddress().getHostAddress(),
+                socket.getPort(),
+                true);
+    }
+
+    public Boolean isConnected() {
+        return isConnected;
     }
 
     public void push(MotoPushData data) {
@@ -52,20 +65,48 @@ public class MotoPush {
 
     public void cmd(String cmd, String... args) {
         String cmdStr = ":" + cmd;
-        for(String s : args) cmdStr += "," + s;
+        for (String s : args) cmdStr += "," + s;
         os.println(cmdStr);
     }
 
     public JSONObject apiMethod(String method, String... args) {
         String url = "https://agentgaming.net:8115/" + method;
-        for(String s : args)  url += "/" + s;
+        for (String s : args) url += "/" + s;
         try {
-            String out = HTTPUtils.basicAuth(url, new UsernamePasswordCredentials("jxBkqvpe0seZhgfavRqB","RXaCcuuQcIUFZuVZik9K"));
+            String out = HTTPUtils.basicAuth(url, new UsernamePasswordCredentials("jxBkqvpe0seZhgfavRqB", "RXaCcuuQcIUFZuVZik9K"));
             return new JSONObject(out);
-        } catch (Exception e) { return null; }
+        } catch (Exception e) {
+            return null;
+        }
     }
 
-    Runnable handleMessages = new Runnable() {
+    //Ping the server every 5 seconds to make sure we are still connected
+    private Runnable ping = new Runnable() {
+        @Override
+        public void run() {
+            boolean reconnect = true;
+
+            while (reconnect) {
+                try {
+                    sslSocket.getOutputStream().write("::ping\n".getBytes());
+                    isConnected = true;
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    reconnect = false;
+                    connectionFailed();
+                } catch (IOException e) {
+                    try {
+                        connect();
+                    } catch (IOException e1) {
+                        connectionFailed();
+                    }
+                }
+            }
+        }
+    };
+
+    //Handle MotoPush messages
+    private Runnable handleMessages = new Runnable() {
         @Override
         public void run() {
             String line;
@@ -78,10 +119,16 @@ public class MotoPush {
                         MotoAPI.getInstance().getServer().getPluginManager().callEvent(new MotoPushEvent(mpd));
                 }
             } catch (IOException e) {
-                e.printStackTrace();
-                //if this exception is called the data is not valid so ignore it
             } catch (Exception e) {
             }
         }
     };
+
+    //The connection has failed. That is not good. I'm not really sure if this is the best way to handle this.
+    private void connectionFailed() {
+        for(Player p : MotoAPI.getInstance().getServer().getOnlinePlayers()) {
+            p.kickPlayer("Unable to connect to persistence server!");
+            isConnected = false;
+        }
+    }
 }
