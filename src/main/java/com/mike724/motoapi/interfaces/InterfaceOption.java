@@ -11,10 +11,16 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface InterfaceOption {
     public int slot();
+
     public String name();
+
     public String description();
+
     public int itemId();
+
     public short itemData() default 0;
+
     public boolean toggleable() default false;
+
     public NetworkRank requiredRank() default NetworkRank.USER;
 }

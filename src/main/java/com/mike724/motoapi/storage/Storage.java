@@ -32,13 +32,13 @@ public class Storage {
     @SuppressWarnings("unused")
     public Object getObject(String key, Class c) {
         String cName = c.getName();
-        if(cacheContains(key, c)) {
+        if (cacheContains(key, c)) {
             return cache.get(key).get(cName);
         } else {
             Object obj = rawStorage.getObject(c, key);
-            if(obj == null) {
+            if (obj == null) {
                 return null;
-            } else if(!c.isInstance(obj)) {
+            } else if (!c.isInstance(obj)) {
                 return null;
             }
             cacheObject(key, obj);
@@ -52,34 +52,35 @@ public class Storage {
     }
 
     public void saveObject(String key, Class c, boolean keepCache) {
-        if(!cacheContains(key, c)) {
+        if (!cacheContains(key, c)) {
             return;
         }
         Object obj = cache.get(key).get(c.getName());
         rawStorage.writeObject(obj, key);
-        if(!keepCache) {
+        if (!keepCache) {
             removeFromCache(key, c);
         }
     }
 
     public void removeFromCache(String key, Class c) {
-        if(cacheContains(key, c)) {
+        if (cacheContains(key, c)) {
             cache.get(key).remove(c.getName());
         }
     }
 
     public boolean cacheContains(String key, Class c) {
-        return(cache.containsKey(key) && cache.get(key).containsKey(c.getName()));
+        return (cache.containsKey(key) && cache.get(key).containsKey(c.getName()));
     }
 
     public void cacheObject(String key, Object obj) {
-        if(!cache.containsKey(key)) {
+        if (!cache.containsKey(key)) {
             cache.put(key, new HashMap<String, Object>());
         }
         cache.get(key).put(obj.getClass().getName(), obj);
     }
 
 }
+
 @SuppressWarnings("unused")
 class DataStorage {
     final static String TABLE_NAME = "object_storage";

@@ -35,8 +35,8 @@ public class HTTPUtils {
     }
 
     /**
-     * @param url    the url of the HTTP server
-     * @param creds  credentials for basic auth
+     * @param url   the url of the HTTP server
+     * @param creds credentials for basic auth
      * @return the HTTP response
      */
     public static String basicAuth(String url, Credentials creds) throws Exception {

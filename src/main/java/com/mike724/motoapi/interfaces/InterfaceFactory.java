@@ -26,8 +26,8 @@ public class InterfaceFactory implements Listener {
 
     private ArrayList<Integer> enabledOptions = new ArrayList<>();
 
-    private HashMap<Integer,InterfaceOption> options = new HashMap<Integer,InterfaceOption>();
-    private HashMap<Integer,Method> methods = new HashMap<Integer,Method>();
+    private HashMap<Integer, InterfaceOption> options = new HashMap<Integer, InterfaceOption>();
+    private HashMap<Integer, Method> methods = new HashMap<Integer, Method>();
 
     public InterfaceFactory(JavaPlugin plugin, Class interfaceClass, String interfaceName) {
         this(plugin, interfaceClass, interfaceName, EventPriority.NORMAL);
@@ -40,13 +40,13 @@ public class InterfaceFactory implements Listener {
 
         int maxSlot = 0;
 
-        for(Method m : interfaceClass.getDeclaredMethods()) {
+        for (Method m : interfaceClass.getDeclaredMethods()) {
             InterfaceOption io = m.getAnnotation(InterfaceOption.class);
-            if(Modifier.isStatic(m.getModifiers()) && m.getParameterTypes()[0].equals(InterfaceClick.class) && io != null) {
+            if (Modifier.isStatic(m.getModifiers()) && m.getParameterTypes()[0].equals(InterfaceClick.class) && io != null) {
                 m.setAccessible(true);
-                if(io.slot() > maxSlot) maxSlot = io.slot();
+                if (io.slot() > maxSlot) maxSlot = io.slot();
                 options.put(io.slot(), io);
-                methods.put(io.slot(),m);
+                methods.put(io.slot(), m);
             }
         }
 
@@ -60,7 +60,7 @@ public class InterfaceFactory implements Listener {
     public void refreshInterface() {
         Inventory inv = this.plugin.getServer().createInventory(null, this.inventorySize, this.interfaceName);
 
-        for(Integer i : options.keySet()) {
+        for (Integer i : options.keySet()) {
             InterfaceOption io = options.get(i);
             ItemStack item = new ItemStack(io.itemId(), 1, io.itemData());
 
@@ -68,13 +68,14 @@ public class InterfaceFactory implements Listener {
             im.setDisplayName(io.name());
 
             ArrayList<String> lore = new ArrayList<>();
-            if(io.toggleable()) lore.add(enabledOptions.contains(io.slot()) ? ChatColor.GREEN + "Enabled" : ChatColor.RED + "Disabled");
+            if (io.toggleable())
+                lore.add(enabledOptions.contains(io.slot()) ? ChatColor.GREEN + "Enabled" : ChatColor.RED + "Disabled");
             lore.add(ChatColor.GRAY + io.description());
             im.setLore(lore);
 
             item.setItemMeta(im);
 
-            inv.setItem(i,item);
+            inv.setItem(i, item);
         }
 
         inventory = inv;
@@ -94,69 +95,69 @@ public class InterfaceFactory implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void monitorPriority(InventoryClickEvent e) {
-        if(eventPriority == EventPriority.MONITOR) {
+        if (eventPriority == EventPriority.MONITOR) {
             handleClick(e);
         }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void highestPriority(InventoryClickEvent e) {
-        if(eventPriority == EventPriority.HIGHEST) {
+        if (eventPriority == EventPriority.HIGHEST) {
             handleClick(e);
         }
     }
 
     @EventHandler(priority = EventPriority.HIGH)
     public void highPriority(InventoryClickEvent e) {
-        if(eventPriority == EventPriority.HIGH) {
+        if (eventPriority == EventPriority.HIGH) {
             handleClick(e);
         }
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void normalPriority(InventoryClickEvent e) {
-        if(eventPriority == EventPriority.NORMAL) {
+        if (eventPriority == EventPriority.NORMAL) {
             handleClick(e);
         }
     }
 
     @EventHandler(priority = EventPriority.LOW)
     public void lowPriority(InventoryClickEvent e) {
-        if(eventPriority == EventPriority.LOW) {
+        if (eventPriority == EventPriority.LOW) {
             handleClick(e);
         }
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void lowestPriority(InventoryClickEvent e) {
-        if(eventPriority == EventPriority.LOWEST) {
+        if (eventPriority == EventPriority.LOWEST) {
             handleClick(e);
         }
     }
 
     public void handleClick(InventoryClickEvent e) {
-        if(!(e.getWhoClicked() instanceof Player)) return;
+        if (!(e.getWhoClicked() instanceof Player)) return;
         Player p = (Player) e.getWhoClicked();
 
-        if(this.getInventory().getViewers().contains(p)) {
-            if(options.containsKey(e.getRawSlot()) && methods.containsKey(e.getRawSlot())) {
+        if (this.getInventory().getViewers().contains(p)) {
+            if (options.containsKey(e.getRawSlot()) && methods.containsKey(e.getRawSlot())) {
                 boolean enabled = false;
-                if(options.get(e.getRawSlot()).toggleable()) {
-                    if(enabledOptions.contains(e.getRawSlot())) {
+                if (options.get(e.getRawSlot()).toggleable()) {
+                    if (enabledOptions.contains(e.getRawSlot())) {
                         enabled = false;
                         enabledOptions.remove(new Integer(e.getRawSlot()));
-                        setEnabled(e.getCurrentItem(),false);
+                        setEnabled(e.getCurrentItem(), false);
                     } else {
                         enabled = true;
                         enabledOptions.add(e.getRawSlot());
-                        setEnabled(e.getCurrentItem(),true);
+                        setEnabled(e.getCurrentItem(), true);
                     }
                 }
 
-                InterfaceClick ic = new InterfaceClick(p,enabled);
+                InterfaceClick ic = new InterfaceClick(p, enabled);
                 Method m = methods.get(e.getRawSlot());
                 try {
-                    m.invoke(null, new Object[] { ic });
+                    m.invoke(null, new Object[]{ic});
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
