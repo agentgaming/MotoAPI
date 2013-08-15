@@ -1,7 +1,5 @@
 package com.mike724.motoapi.storage;
 
-import com.mike724.motoapi.storage.defaults.NetworkPlayer;
-
 import java.util.HashMap;
 
 public class Storage {
@@ -15,8 +13,11 @@ public class Storage {
         String ba_pass = "";
         String apiKey = "";
         rawStorage = new DataStorage(ba_user, ba_pass, apiKey);
+
+        cache = new HashMap<>();
     }
 
+    @SuppressWarnings("unused")
     public Object getObject(String key, Class c) {
         String cName = c.getName();
         if(cacheContains(key, c)) {
@@ -33,6 +34,7 @@ public class Storage {
         }
     }
 
+    @SuppressWarnings("unused")
     public void saveObject(String key, Class c) {
         saveObject(key, c, true);
     }
@@ -58,7 +60,7 @@ public class Storage {
         return(cache.containsKey(key) && cache.get(key).containsKey(c.getName()));
     }
 
-    private void cacheObject(String key, Object obj) {
+    public void cacheObject(String key, Object obj) {
         if(!cache.containsKey(key)) {
             cache.put(key, new HashMap<String, Object>());
         }
