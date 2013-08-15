@@ -3,7 +3,8 @@ package com.mike724.motoapi.push;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-public class MotoPushEvent extends Event{
+@SuppressWarnings("unused")
+public class MotoPushEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
     private MotoPushData data;
 
