@@ -8,7 +8,6 @@ public class NetworkPlayer {
     private boolean isBanned;
     private NetworkRank rank;
     private long joinDate;
-    private String currentIP;
     private ArrayList<String> friends;
 
     public NetworkPlayer(String player, Boolean isBanned, NetworkRank rank, long joinDate) {
@@ -22,10 +21,12 @@ public class NetworkPlayer {
         this(player, false, NetworkRank.USER, System.currentTimeMillis());
     }
 
+    //Player
     public String getPlayer() {
         return player;
     }
 
+    //Banned
     public boolean isBanned() {
         return isBanned;
     }
@@ -34,6 +35,8 @@ public class NetworkPlayer {
         isBanned = banned;
     }
 
+
+    //Rank
     public NetworkRank getRank() {
         return rank;
     }
@@ -42,6 +45,7 @@ public class NetworkPlayer {
         this.rank = rank;
     }
 
+    //Join Date
     public long getJoinDate() {
         return joinDate;
     }
@@ -50,8 +54,13 @@ public class NetworkPlayer {
         this.joinDate = joinDate;
     }
 
+    //Friends
     public void addFriend(String p) {
         friends.add(p);
+    }
+
+    public void removeFriend(String p) {
+        friends.remove(p);
     }
 
     public ArrayList<String> getFriends() {
