@@ -5,7 +5,6 @@ import org.apache.commons.codec.binary.Base64;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import java.nio.charset.Charset;
 
 class Security {
 
@@ -19,7 +18,7 @@ class Security {
         if (text == null || text.length() == 0)
             throw new Exception("Empty string");
 
-        byte[] encrypted = null;
+        byte[] encrypted;
 
         try {
             cipher.init(Cipher.ENCRYPT_MODE, keyspec, ivspec);
@@ -39,7 +38,7 @@ class Security {
         if (code == null || code.length() == 0)
             throw new Exception("Empty string");
 
-        byte[] decrypted = null;
+        byte[] decrypted;
 
         try {
             cipher.init(Cipher.DECRYPT_MODE, keyspec, ivspec);
@@ -49,6 +48,7 @@ class Security {
         }
         return new String(decrypted);
     }
+
     private static String padString(String source) {
         char paddingChar = ' ';
         int size = 16;
