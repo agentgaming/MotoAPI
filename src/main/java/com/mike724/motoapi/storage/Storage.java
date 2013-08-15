@@ -30,10 +30,10 @@ public class Storage {
     }
 
     @SuppressWarnings("unused")
-    public Object getObject(String key, Class c) {
+    public <T extends Object> T getObject(String key, Class<T> c) {
         String cName = c.getName();
         if (cacheContains(key, c)) {
-            return cache.get(key).get(cName);
+            return c.cast(cache.get(key).get(cName));
         } else {
             Object obj = rawStorage.getObject(c, key);
             if (obj == null) {
@@ -42,7 +42,7 @@ public class Storage {
                 return null;
             }
             cacheObject(key, obj);
-            return obj;
+            return c.cast(obj);
         }
     }
 
