@@ -56,7 +56,7 @@ public class Storage {
         }
     }
 
-    private boolean cacheContains(String key, Class c) {
+    public boolean cacheContains(String key, Class c) {
         return(cache.containsKey(key) && cache.get(key).containsKey(c.getName()));
     }
 
