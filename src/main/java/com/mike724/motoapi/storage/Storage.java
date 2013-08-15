@@ -7,13 +7,8 @@ public class Storage {
     private DataStorage rawStorage;
     private HashMap<String, HashMap<String, Object>> cache;
 
-    public Storage() throws Exception {
-        //setup raw storage
-        String ba_user = "";
-        String ba_pass = "";
-        String apiKey = "";
+    public Storage(String ba_user, String ba_pass, String apiKey) throws Exception {
         rawStorage = new DataStorage(ba_user, ba_pass, apiKey);
-
         cache = new HashMap<>();
     }
 
