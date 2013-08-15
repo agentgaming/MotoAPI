@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("unused")
-public class DataStorage {
+class DataStorage {
     final static String TABLE_NAME = "object_storage";
 
     private AmazonDynamoDBClient db;
