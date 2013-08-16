@@ -21,6 +21,4 @@ public @interface InterfaceOption {
     public short itemData() default 0;
 
     public boolean toggleable() default false;
-
-    public NetworkRank requiredRank() default NetworkRank.USER;
 }

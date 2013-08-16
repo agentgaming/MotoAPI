@@ -9,7 +9,6 @@ public class DynamicInterfaceOption {
     public int itemId;
     public short itemData;
     public boolean toggleable;
-    public NetworkRank requiredRank;
 
     public DynamicInterfaceOption(Integer slot, String name, String description, Integer itemId) {
         this(slot,name,description,itemId,(short) 0);
@@ -20,17 +19,12 @@ public class DynamicInterfaceOption {
     }
 
     public DynamicInterfaceOption(Integer slot, String name, String description, Integer itemId, short itemData, boolean toggleable) {
-        this(slot,name,description,itemId,itemData,toggleable,NetworkRank.USER);
-    }
-
-    public DynamicInterfaceOption(Integer slot, String name, String description, Integer itemId, short itemData, boolean toggleable, NetworkRank requiredRank) {
         this.slot = slot;
         this.name = name;
         this.description = description;
         this.itemId = itemId;
         this.itemData = itemData;
         this.toggleable = toggleable;
-        this.requiredRank = requiredRank;
     }
 
     public int getSlot() {
@@ -54,9 +48,5 @@ public class DynamicInterfaceOption {
 
     public boolean isToggleable() {
         return toggleable;
-    }
-
-    public NetworkRank getRequiredRank() {
-        return requiredRank;
     }
 }
