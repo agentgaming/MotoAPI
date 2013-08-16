@@ -30,7 +30,7 @@ public class InterfaceFactory implements Listener {
     private HashMap<Integer, Method> methods;
 
     private HashMap<Integer, DynamicInterfaceOption> dynamicOptions;
-    private HashMap<Integer, Runnable> dynamicRunnables;
+    private HashMap<Integer, DynamicInterfaceRunnable> dynamicRunnables;
 
     private Boolean dynamic;
 
@@ -38,11 +38,11 @@ public class InterfaceFactory implements Listener {
         this(plugin, interfaceClass, interfaceName, EventPriority.NORMAL);
     }
 
-    public InterfaceFactory(JavaPlugin plugin, String interfaceName, HashMap<Integer, DynamicInterfaceOption> options, HashMap<Integer, Runnable> runnables) {
+    public InterfaceFactory(JavaPlugin plugin, String interfaceName, HashMap<Integer, DynamicInterfaceOption> options, HashMap<Integer, DynamicInterfaceRunnable> runnables) {
         this(plugin,interfaceName,options,runnables,EventPriority.NORMAL);
     }
 
-    public InterfaceFactory(JavaPlugin plugin, String interfaceName, HashMap<Integer, DynamicInterfaceOption> options, HashMap<Integer, Runnable> runnables, EventPriority eventPriority) {
+    public InterfaceFactory(JavaPlugin plugin, String interfaceName, HashMap<Integer, DynamicInterfaceOption> options, HashMap<Integer, DynamicInterfaceRunnable> runnables, EventPriority eventPriority) {
         this.dynamic = true;
 
         this.plugin = plugin;
@@ -211,8 +211,8 @@ public class InterfaceFactory implements Listener {
 
                     //TODO: find a way to pass inventory click
                     InterfaceClick ic = new InterfaceClick(p, enabled);
-                    Runnable r = dynamicRunnables.get(e.getRawSlot());
-                    r.run();
+                    DynamicInterfaceRunnable r = dynamicRunnables.get(e.getRawSlot());
+                    r.run(ic);
                 }
                 e.setCancelled(true);
             } else {
