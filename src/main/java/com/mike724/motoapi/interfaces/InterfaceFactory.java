@@ -26,36 +26,36 @@ public class InterfaceFactory implements Listener {
 
     private ArrayList<Integer> enabledOptions = new ArrayList<>();
 
-    private HashMap<Integer, InterfaceOption> options = new HashMap<Integer, InterfaceOption>();
-    private HashMap<Integer, Method> methods = new HashMap<Integer, Method>();
+    private HashMap<Integer, InterfaceOption> options;
+    private HashMap<Integer, Method> methods;
+
+    private HashMap<Integer, DynamicInterfaceOption> dynamicOptions;
+    private HashMap<Integer, Runnable> dynamicRunnables;
+
+    private Boolean dynamic;
 
     public InterfaceFactory(JavaPlugin plugin, Class interfaceClass, String interfaceName) {
         this(plugin, interfaceClass, interfaceName, EventPriority.NORMAL);
     }
 
-    public InterfaceFactory(JavaPlugin plugin, String interfaceName, HashMap<Integer, InterfaceOption> options, HashMap<Integer, Runnable> runnables) {
+    public InterfaceFactory(JavaPlugin plugin, String interfaceName, HashMap<Integer, DynamicInterfaceOption> options, HashMap<Integer, Runnable> runnables) {
         this(plugin,interfaceName,options,runnables,EventPriority.NORMAL);
     }
 
-    public InterfaceFactory(JavaPlugin plugin, String interfaceName, HashMap<Integer, InterfaceOption> options, HashMap<Integer, Runnable> runnables, EventPriority eventPriority) {
+    public InterfaceFactory(JavaPlugin plugin, String interfaceName, HashMap<Integer, DynamicInterfaceOption> options, HashMap<Integer, Runnable> runnables, EventPriority eventPriority) {
+        this.dynamic = true;
+
         this.plugin = plugin;
         this.interfaceName = interfaceName;
         this.eventPriority = eventPriority;
-        this.options = options;
+
+        this.dynamicOptions = options;
+        this.dynamicRunnables = runnables;
 
         int maxSlot = 0;
 
-        for(Integer key : runnables.keySet()) {
-
+        for(Integer key : options.keySet())
             if(key > maxSlot) maxSlot = key;
-
-            Runnable r = runnables.get(key);
-            try {
-                methods.put(key,r.getClass().getDeclaredMethod("run"));
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-            }
-        }
 
         inventorySize = (int) (Math.ceil(maxSlot / 9.0) * 9.0);
 
@@ -65,9 +65,14 @@ public class InterfaceFactory implements Listener {
     }
 
     public InterfaceFactory(JavaPlugin plugin, Class interfaceClass, String interfaceName, EventPriority eventPriority) {
+        this.dynamic = false;
+
         this.plugin = plugin;
         this.interfaceName = interfaceName;
         this.eventPriority = eventPriority;
+
+        options = new HashMap<>();
+        methods = new HashMap<>();
 
         int maxSlot = 0;
 
@@ -91,22 +96,40 @@ public class InterfaceFactory implements Listener {
     public void refreshInterface() {
         Inventory inv = this.plugin.getServer().createInventory(null, this.inventorySize, this.interfaceName);
 
-        for (Integer i : options.keySet()) {
-            InterfaceOption io = options.get(i);
-            ItemStack item = new ItemStack(io.itemId(), 1, io.itemData());
+        for (Integer i : dynamic ? dynamicOptions.keySet() : options.keySet()) {
+            if(dynamic) {
+                DynamicInterfaceOption io = dynamicOptions.get(i);
+                ItemStack item = new ItemStack(io.getItemId(), 1, io.getItemData());
 
-            ItemMeta im = item.getItemMeta();
-            im.setDisplayName(io.name());
+                ItemMeta im = item.getItemMeta();
+                im.setDisplayName(io.getName());
 
-            ArrayList<String> lore = new ArrayList<>();
-            if (io.toggleable())
-                lore.add(enabledOptions.contains(io.slot()) ? ChatColor.GREEN + "Enabled" : ChatColor.RED + "Disabled");
-            lore.add(ChatColor.GRAY + io.description());
-            im.setLore(lore);
+                ArrayList<String> lore = new ArrayList<>();
+                if (io.isToggleable())
+                    lore.add(enabledOptions.contains(io.getSlot()) ? ChatColor.GREEN + "Enabled" : ChatColor.RED + "Disabled");
+                lore.add(ChatColor.GRAY + io.getDescription());
+                im.setLore(lore);
 
-            item.setItemMeta(im);
+                item.setItemMeta(im);
 
-            inv.setItem(i, item);
+                inv.setItem(i, item);
+            } else {
+                InterfaceOption io = options.get(i);
+                ItemStack item = new ItemStack(io.itemId(), 1, io.itemData());
+
+                ItemMeta im = item.getItemMeta();
+                im.setDisplayName(io.name());
+
+                ArrayList<String> lore = new ArrayList<>();
+                if (io.toggleable())
+                    lore.add(enabledOptions.contains(io.slot()) ? ChatColor.GREEN + "Enabled" : ChatColor.RED + "Disabled");
+                lore.add(ChatColor.GRAY + io.description());
+                im.setLore(lore);
+
+                item.setItemMeta(im);
+
+                inv.setItem(i, item);
+            }
         }
 
         inventory = inv;
@@ -171,29 +194,52 @@ public class InterfaceFactory implements Listener {
         Player p = (Player) e.getWhoClicked();
 
         if (this.getInventory().getViewers().contains(p)) {
-            if (options.containsKey(e.getRawSlot()) && methods.containsKey(e.getRawSlot())) {
-                boolean enabled = false;
-                if (options.get(e.getRawSlot()).toggleable()) {
-                    if (enabledOptions.contains(e.getRawSlot())) {
-                        enabled = false;
-                        enabledOptions.remove(new Integer(e.getRawSlot()));
-                        setEnabled(e.getCurrentItem(), false);
-                    } else {
-                        enabled = true;
-                        enabledOptions.add(e.getRawSlot());
-                        setEnabled(e.getCurrentItem(), true);
+            if(dynamic) {
+                if (dynamicOptions.containsKey(e.getRawSlot()) && dynamicRunnables.containsKey(e.getRawSlot())) {
+                    boolean enabled = false;
+                    if (dynamicOptions.get(e.getRawSlot()).isToggleable()) {
+                        if (enabledOptions.contains(e.getRawSlot())) {
+                            enabled = false;
+                            enabledOptions.remove(new Integer(e.getRawSlot()));
+                            setEnabled(e.getCurrentItem(), false);
+                        } else {
+                            enabled = true;
+                            enabledOptions.add(e.getRawSlot());
+                            setEnabled(e.getCurrentItem(), true);
+                        }
+                    }
+
+                    //TODO: find a way to pass inventory click
+                    InterfaceClick ic = new InterfaceClick(p, enabled);
+                    Runnable r = dynamicRunnables.get(e.getRawSlot());
+                    r.run();
+                }
+                e.setCancelled(true);
+            } else {
+                if (options.containsKey(e.getRawSlot()) && methods.containsKey(e.getRawSlot())) {
+                    boolean enabled = false;
+                    if (options.get(e.getRawSlot()).toggleable()) {
+                        if (enabledOptions.contains(e.getRawSlot())) {
+                            enabled = false;
+                            enabledOptions.remove(new Integer(e.getRawSlot()));
+                            setEnabled(e.getCurrentItem(), false);
+                        } else {
+                            enabled = true;
+                            enabledOptions.add(e.getRawSlot());
+                            setEnabled(e.getCurrentItem(), true);
+                        }
+                    }
+
+                    InterfaceClick ic = new InterfaceClick(p, enabled);
+                    Method m = methods.get(e.getRawSlot());
+                    try {
+                        m.invoke(null, new Object[]{ic});
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
                     }
                 }
-
-                InterfaceClick ic = new InterfaceClick(p, enabled);
-                Method m = methods.get(e.getRawSlot());
-                try {
-                    m.invoke(null, new Object[]{ic});
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+                e.setCancelled(true);
             }
-            e.setCancelled(true);
         }
     }
 }
