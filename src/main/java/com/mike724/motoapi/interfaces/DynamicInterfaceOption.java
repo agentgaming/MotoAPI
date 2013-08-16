@@ -1,7 +1,5 @@
 package com.mike724.motoapi.interfaces;
 
-import com.mike724.motoapi.storage.defaults.NetworkRank;
-
 public class DynamicInterfaceOption {
     public int slot;
     public String name;
@@ -11,11 +9,11 @@ public class DynamicInterfaceOption {
     public boolean toggleable;
 
     public DynamicInterfaceOption(Integer slot, String name, String description, Integer itemId) {
-        this(slot,name,description,itemId,(short) 0);
+        this(slot, name, description, itemId, (short) 0);
     }
 
     public DynamicInterfaceOption(Integer slot, String name, String description, Integer itemId, short itemData) {
-        this(slot,name,description,itemId,itemData,false);
+        this(slot, name, description, itemId, itemData, false);
     }
 
     public DynamicInterfaceOption(Integer slot, String name, String description, Integer itemId, short itemData, boolean toggleable) {
@@ -30,6 +28,7 @@ public class DynamicInterfaceOption {
     public int getSlot() {
         return slot;
     }
+
     public String getName() {
         return name;
     }

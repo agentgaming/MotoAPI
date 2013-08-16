@@ -39,7 +39,7 @@ public class InterfaceFactory implements Listener {
     }
 
     public InterfaceFactory(JavaPlugin plugin, String interfaceName, HashMap<Integer, DynamicInterfaceOption> options, HashMap<Integer, DynamicInterfaceRunnable> runnables) {
-        this(plugin,interfaceName,options,runnables,EventPriority.NORMAL);
+        this(plugin, interfaceName, options, runnables, EventPriority.NORMAL);
     }
 
     public InterfaceFactory(JavaPlugin plugin, String interfaceName, HashMap<Integer, DynamicInterfaceOption> options, HashMap<Integer, DynamicInterfaceRunnable> runnables, EventPriority eventPriority) {
@@ -54,8 +54,8 @@ public class InterfaceFactory implements Listener {
 
         int maxSlot = 0;
 
-        for(Integer key : options.keySet())
-            if(key > maxSlot) maxSlot = key;
+        for (Integer key : options.keySet())
+            if (key > maxSlot) maxSlot = key;
 
         inventorySize = (int) (Math.ceil(maxSlot / 9.0) * 9.0);
 
@@ -97,7 +97,7 @@ public class InterfaceFactory implements Listener {
         Inventory inv = this.plugin.getServer().createInventory(null, this.inventorySize, this.interfaceName);
 
         for (Integer i : dynamic ? dynamicOptions.keySet() : options.keySet()) {
-            if(dynamic) {
+            if (dynamic) {
                 DynamicInterfaceOption io = dynamicOptions.get(i);
                 ItemStack item = new ItemStack(io.getItemId(), 1, io.getItemData());
 
@@ -194,7 +194,7 @@ public class InterfaceFactory implements Listener {
         Player p = (Player) e.getWhoClicked();
 
         if (this.getInventory().getViewers().contains(p)) {
-            if(dynamic) {
+            if (dynamic) {
                 if (dynamicOptions.containsKey(e.getRawSlot()) && dynamicRunnables.containsKey(e.getRawSlot())) {
                     boolean enabled = false;
                     if (dynamicOptions.get(e.getRawSlot()).isToggleable()) {
