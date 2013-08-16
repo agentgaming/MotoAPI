@@ -33,6 +33,37 @@ public class InterfaceFactory implements Listener {
         this(plugin, interfaceClass, interfaceName, EventPriority.NORMAL);
     }
 
+    public InterfaceFactory(JavaPlugin plugin, String interfaceName, HashMap<Integer, InterfaceOption> options, HashMap<Integer, Runnable> runnables) {
+        this(plugin,interfaceName,options,runnables,EventPriority.NORMAL);
+    }
+
+    public InterfaceFactory(JavaPlugin plugin, String interfaceName, HashMap<Integer, InterfaceOption> options, HashMap<Integer, Runnable> runnables, EventPriority eventPriority) {
+        this.plugin = plugin;
+        this.interfaceName = interfaceName;
+        this.eventPriority = eventPriority;
+        this.options = options;
+
+        int maxSlot = 0;
+
+        for(Integer key : runnables.keySet()) {
+
+            if(key > maxSlot) maxSlot = key;
+
+            Runnable r = runnables.get(key);
+            try {
+                methods.put(key,r.getClass().getDeclaredMethod("run"));
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            }
+        }
+
+        inventorySize = (int) (Math.ceil(maxSlot / 9.0) * 9.0);
+
+        refreshInterface();
+
+        plugin.getServer().getPluginManager().registerEvents(this, plugin);
+    }
+
     public InterfaceFactory(JavaPlugin plugin, Class interfaceClass, String interfaceName, EventPriority eventPriority) {
         this.plugin = plugin;
         this.interfaceName = interfaceName;
