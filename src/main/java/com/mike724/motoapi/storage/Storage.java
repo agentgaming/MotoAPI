@@ -7,6 +7,7 @@ import com.amazonaws.services.dynamodbv2.model.*;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.gson.Gson;
+import com.mike724.motoapi.MotoAPI;
 import org.apache.http.NameValuePair;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -33,6 +34,7 @@ public class Storage {
     public <T> T getObject(String key, Class<T> c) {
         String cName = c.getName();
         if (cacheContains(key, c)) {
+            MotoAPI.getInstance().getLogger().info("Returning object "+c.getSimpleName()+" for "+key+" from CACHE");
             return c.cast(cache.get(key).get(cName));
         } else {
             Object obj = rawStorage.getObject(c, key);
@@ -42,6 +44,7 @@ public class Storage {
                 return null;
             }
             cacheObject(key, obj);
+            MotoAPI.getInstance().getLogger().info("Returning object "+c.getSimpleName()+" for "+key+" from AMAZON");
             return c.cast(obj);
         }
     }
@@ -78,6 +81,7 @@ public class Storage {
         rawStorage.writeObjects(save);
         if(!keepCache) {
             cache.remove(key);
+            MotoAPI.getInstance().getLogger().info("Removing "+key+" from cache: "+cache.containsKey(key));
         }
     }
 
