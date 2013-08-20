@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.mike724.motoapi.MotoAPI;
 import com.mike724.motoapi.storage.HTTPUtils;
 import org.apache.http.auth.UsernamePasswordCredentials;
+import org.bukkit.entity.Player;
 
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
@@ -14,21 +15,16 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.Socket;
 
-@SuppressWarnings("unused")
 public class MotoPush {
     private String apiKey;
-    private Socket socket;
+    private SSLSocket sslSocket;
     private BufferedReader is;
     private PrintStream os;
     private Gson gson = new Gson();
+    private Boolean isConnected = true;
 
     public MotoPush() throws IOException {
-        socket = new Socket("agentgaming.net", 8114);
-        SSLSocket sslSocket = (SSLSocket) ((SSLSocketFactory) SSLSocketFactory.getDefault()).createSocket(
-                socket,
-                socket.getInetAddress().getHostAddress(),
-                socket.getPort(),
-                true);
+        connect();
 
         os = new PrintStream(sslSocket.getOutputStream());
         is = new BufferedReader(new InputStreamReader(sslSocket.getInputStream()));
@@ -36,6 +32,22 @@ public class MotoPush {
         os.println("nXWvOgfgRJKBbbzowle1");
 
         new Thread(handleMessages).start();
+
+        new Thread(ping).start();
+
+    }
+
+    private void connect() throws IOException {
+        Socket socket = new Socket("agentgaming.net", 8114);
+        sslSocket = (SSLSocket) ((SSLSocketFactory) SSLSocketFactory.getDefault()).createSocket(
+                socket,
+                socket.getInetAddress().getHostAddress(),
+                socket.getPort(),
+                true);
+    }
+
+    public Boolean isConnected() {
+        return isConnected;
     }
 
     public void push(MotoPushData data) {
@@ -64,22 +76,55 @@ public class MotoPush {
         }
     }
 
-    Runnable handleMessages = new Runnable() {
+    //Ping the server every 5 seconds to make sure we are still connected
+    private Runnable ping = new Runnable() {
         @Override
         public void run() {
-            String data;
+            boolean reconnect = true;
+
+            while (reconnect) {
+                try {
+                    sslSocket.getOutputStream().write("::ping\n".getBytes());
+                    isConnected = true;
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    reconnect = false;
+                    connectionFailed();
+                } catch (IOException e) {
+                    try {
+                        connect();
+                    } catch (IOException e1) {
+                        connectionFailed();
+                    }
+                }
+            }
+        }
+    };
+
+    //Handle MotoPush messages
+    private Runnable handleMessages = new Runnable() {
+        @Override
+        public void run() {
+            String line;
             try {
-                while ((data = is.readLine()) != null) {
+                while ((line = is.readLine()) != null) {
+                    String data = new String(line);
                     data = Security.decrypt(data, "9612/n1utzle//pa");
                     MotoPushData mpd = gson.fromJson(data, MotoPushData.class);
                     if (mpd != null)
                         MotoAPI.getInstance().getServer().getPluginManager().callEvent(new MotoPushEvent(mpd));
                 }
             } catch (IOException e) {
-                e.printStackTrace();
             } catch (Exception e) {
-                //Data is not valid
             }
         }
     };
+
+    //The connection has failed. That is not good. I'm not really sure if this is the best way to handle this.
+    private void connectionFailed() {
+        for (Player p : MotoAPI.getInstance().getServer().getOnlinePlayers()) {
+            p.kickPlayer("Unable to connect to persistence server!");
+            isConnected = false;
+        }
+    }
 }
