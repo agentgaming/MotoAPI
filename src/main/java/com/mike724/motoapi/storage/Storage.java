@@ -62,6 +62,43 @@ public class Storage {
         }
     }
 
+    @SuppressWarnings("unused")
+    public void saveAllObjectsForPlayer(String key) {
+        saveAllObjectsForPlayer(key, true);
+    }
+
+    public void saveAllObjectsForPlayer(String key, boolean keepCache) {
+        if(!cache.containsKey(key)) {
+            return;
+        }
+        HashMap<Object, String> save = new HashMap<>();
+        for(Object obj : cache.get(key).values()) {
+            save.put(obj, key);
+        }
+        rawStorage.writeObjects(save);
+        if(!keepCache) {
+            cache.remove(key);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public void saveAllObjects() {
+        saveAllObjects(true);
+    }
+
+    public void saveAllObjects(boolean keepCache) {
+        HashMap<Object, String> save = new HashMap<>();
+        for(String name : cache.keySet()) {
+            for(Object obj : cache.get(name).values()) {
+                save.put(obj, name);
+            }
+        }
+        rawStorage.writeObjects(save);
+        if(!keepCache) {
+            cache.clear();
+        }
+    }
+
     public void removeFromCache(String key, Class c) {
         if(cacheContains(key, c)) {
             cache.get(key).remove(c.getName());
