@@ -97,7 +97,9 @@ public class Storage {
                 save.put(obj, name);
             }
         }
-        rawStorage.writeObjects(save);
+        if(!save.isEmpty()) {
+            rawStorage.writeObjects(save);
+        }
         if(!keepCache) {
             cache.clear();
         }
