@@ -115,7 +115,9 @@ public class MotoPush {
                         MotoAPI.getInstance().getServer().getPluginManager().callEvent(new MotoPushEvent(mpd));
                 }
             } catch (IOException e) {
+                e.printStackTrace();
             } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     };
