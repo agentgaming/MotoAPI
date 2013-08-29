@@ -18,6 +18,10 @@ public class PortalManager implements Listener {
 
     private BlockFace[] facesToCheck = {BlockFace.DOWN, BlockFace.UP, BlockFace.EAST, BlockFace.WEST, BlockFace.NORTH, BlockFace.SOUTH};
 
+    public PortalManager() {
+        portals = new HashMap<>();
+    }
+
     @SuppressWarnings("unused")
     public Integer registerPortal(Block mainBlock) {
         int blockCount = 0;
