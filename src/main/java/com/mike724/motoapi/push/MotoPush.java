@@ -111,6 +111,7 @@ public class MotoPush {
                     String data = new String(line);
                     data = Security.decrypt(data, "9612/n1utzle//pa");
                     MotoPushData mpd = gson.fromJson(data, MotoPushData.class);
+                    System.out.println("[Inform Dakota] " + line);
                     if (mpd != null)
                         MotoAPI.getInstance().getServer().getPluginManager().callEvent(new MotoPushEvent(mpd));
                 }
