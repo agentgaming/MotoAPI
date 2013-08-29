@@ -7,7 +7,6 @@ import com.amazonaws.services.dynamodbv2.model.*;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.gson.Gson;
-import com.mike724.motoapi.MotoAPI;
 import org.apache.http.NameValuePair;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -20,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@SuppressWarnings("unused")
 public class Storage {
 
     private DataStorage rawStorage;
@@ -69,15 +69,15 @@ public class Storage {
     }
 
     public void saveAllObjectsForPlayer(String key, boolean keepCache) {
-        if(!cache.containsKey(key)) {
+        if (!cache.containsKey(key)) {
             return;
         }
         HashMap<Object, String> save = new HashMap<>();
-        for(Object obj : cache.get(key).values()) {
+        for (Object obj : cache.get(key).values()) {
             save.put(obj, key);
         }
         rawStorage.writeObjects(save);
-        if(!keepCache) {
+        if (!keepCache) {
             cache.remove(key);
         }
     }
@@ -89,15 +89,15 @@ public class Storage {
 
     public void saveAllObjects(boolean keepCache) {
         HashMap<Object, String> save = new HashMap<>();
-        for(String name : cache.keySet()) {
-            for(Object obj : cache.get(name).values()) {
+        for (String name : cache.keySet()) {
+            for (Object obj : cache.get(name).values()) {
                 save.put(obj, name);
             }
         }
-        if(!save.isEmpty()) {
+        if (!save.isEmpty()) {
             rawStorage.writeObjects(save);
         }
-        if(!keepCache) {
+        if (!keepCache) {
             cache.clear();
         }
     }
