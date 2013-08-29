@@ -11,17 +11,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class PortalEvents implements Listener {
-    private static HashMap<Player, Block> playerBlocks = new HashMap<>();
-
     @EventHandler
     public static void onPlayerMove(PlayerMoveEvent e) {
         if(e.isCancelled()) return;
 
-        if(playerBlocks.containsKey(e.getPlayer())) {
-            if(playerBlocks.get(e.getPlayer()) == e.getTo().getBlock()) return;
-        }
-
-        playerBlocks.put(e.getPlayer(), e.getTo().getBlock());
+        if(e.getTo().getBlock() == e.getFrom().getBlock()) return;
 
         for(Integer i : PortalManager.getPortals().keySet()) {
             ArrayList<Block> portal = PortalManager.getPortals().get(i);
