@@ -33,12 +33,12 @@ public class PortalManager implements Listener {
         while (blocks.size() > 0) {
             Block test = blocks.get(0);
             if (portalBlocks.contains(test)) continue;
-            if (test.getType() == Material.STATIONARY_WATER) {
+            if (test.getType().equals(Material.STATIONARY_WATER) || test.getType().equals(Material.WATER)) {
                 portalBlocks.add(test);
                 blockCount++;
                 for (BlockFace face : facesToCheck) {
                     Block relBlock = test.getRelative(face);
-                    if (relBlock.getType() == Material.STATIONARY_WATER) {
+                    if (relBlock.getType().equals(Material.STATIONARY_WATER) || relBlock.getType().equals(Material.WATER)) {
                         if (!portalBlocks.contains(relBlock)) blocks.add(relBlock);
                     }
                 }
