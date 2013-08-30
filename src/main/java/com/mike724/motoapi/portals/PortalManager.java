@@ -24,33 +24,25 @@ public class PortalManager implements Listener {
 
     @SuppressWarnings("unused")
     public Integer registerPortal(Block mainBlock) {
-        int blockCount = 0;
-        ArrayList<Block> blocks = new ArrayList<>();
-        ArrayList<Block> portalBlocks = new ArrayList<>();
+        ArrayList<Block> waterBlocks = new ArrayList<>();
 
-        blocks.add(mainBlock);
-
-        while (blocks.size() > 0) {
-            Block test = blocks.get(0);
-            if (portalBlocks.contains(test)) continue;
-            if (test.getType().equals(Material.STATIONARY_WATER) || test.getType().equals(Material.WATER)) {
-                portalBlocks.add(test);
-                blockCount++;
-                for (BlockFace face : facesToCheck) {
-                    Block relBlock = test.getRelative(face);
-                    if (relBlock.getType().equals(Material.STATIONARY_WATER) || relBlock.getType().equals(Material.WATER)) {
-                        if (!portalBlocks.contains(relBlock)) blocks.add(relBlock);
-                    }
-                }
-            }
-            blocks.remove(test);
-            if (blockCount >= 64) break;
-        }
-        if (portalBlocks.size() < 1) return null;
+        collectBlocks(mainBlock, waterBlocks);
 
         Integer idx = portals.size();
-        portals.put(idx, portalBlocks);
+        portals.put(idx, waterBlocks);
         return idx;
+    }
+
+    private void collectBlocks(Block anchor, ArrayList<Block> collected) {
+        if (collected.size() >= 64) return;
+        if (!anchor.getType().equals(Material.STATIONARY_WATER)) return;
+        if (collected.contains(anchor)) return;
+
+        collected.add(anchor);
+
+        for (BlockFace face : facesToCheck) {
+            collectBlocks(anchor.getRelative(face), collected);
+        }
     }
 
     @SuppressWarnings("unused")
