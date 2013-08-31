@@ -6,17 +6,23 @@ package com.mike724.motoapi.midi;
  */
 
 import com.mike724.motoapi.MotoAPI;
-import org.bukkit.ChatColor;
+import com.mike724.motoapi.storage.HTTPUtils;
+import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
+import org.apache.http.NameValuePair;
+import org.apache.http.auth.Credentials;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.message.BasicNameValuePair;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import javax.sound.midi.*;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author t7seven7t, dakota628
@@ -24,13 +30,13 @@ import java.util.Map;
 class SequencerMidiPlayer implements Receiver, MidiPlayer {
     private final Sequencer sequencer;
 
-    private final List<Player> tunedIn = new ArrayList<Player>();
-    private final Map<Integer, Byte> channelPatches = new HashMap<Integer, Byte>();
+    private final ArrayList<Player> tunedIn = new ArrayList<Player>();
+    private final HashMap<Integer, Byte> channelPatches = new HashMap<Integer, Byte>();
 
     private boolean nowPlaying = false;
     private String midiName;
 
-    private ArrayList<BukkitTask> tasks;
+    private ArrayList<BukkitTask> tasks = new ArrayList<>();
 
     public SequencerMidiPlayer() throws MidiUnavailableException {
         sequencer = MidiSystem.getSequencer();
@@ -40,8 +46,6 @@ class SequencerMidiPlayer implements Receiver, MidiPlayer {
 
     public void tuneIn(Player player) {
         tunedIn.add(player);
-
-        player.sendMessage(ChatColor.AQUA + "Now playing: " + ChatColor.YELLOW + midiName);
     }
 
     public void tuneOut(Player player) {
@@ -70,13 +74,25 @@ class SequencerMidiPlayer implements Receiver, MidiPlayer {
     }
 
     public InputStream getMidiStream(String name) {
-        //TODO: implement getting this OTA, for now we will use local files
-        File midi = new File(MotoAPI.getInstance().getDataFolder(), name);
+        byte[] midiBytes = null;
         try {
-            return new FileInputStream(midi);
-        } catch (FileNotFoundException e) {
+            List<NameValuePair> params = new ArrayList<>();
+            params.add(new BasicNameValuePair("n", name));
+            String out = doPost("https://agentgaming.net/api/get_midi.php", params);
+
+            if (out.trim() == "0") {
+                System.exit(0);
+            }
+
+            midiBytes = Base64.decode(out);
+        } catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
+
+        if (midiBytes == null) return null;
+
+        return new ByteArrayInputStream(midiBytes);
     }
 
     public void playSong(String midiName) {
@@ -94,12 +110,6 @@ class SequencerMidiPlayer implements Receiver, MidiPlayer {
             System.err.println("Invalid midi file: " + midiName);
         } catch (IOException e) {
             System.err.println("Can't read file: " + midiName);
-        }
-
-        for (Player player : tunedIn) {
-
-            player.sendMessage(ChatColor.AQUA + "Now playing: " + ChatColor.YELLOW + midiName);
-
         }
 
         BukkitTask task = new BukkitRunnable() {
@@ -132,12 +142,10 @@ class SequencerMidiPlayer implements Receiver, MidiPlayer {
 
     @Override
     public void send(MidiMessage message, long timeStamp) {
-
         if (!(message instanceof ShortMessage))
             return; // Not interested in meta events
 
         ShortMessage event = (ShortMessage) message;
-
         if (event.getCommand() == ShortMessage.NOTE_ON) {
 
             int midiNote = event.getData1();
@@ -154,22 +162,30 @@ class SequencerMidiPlayer implements Receiver, MidiPlayer {
                 patch = channelPatches.get(channel);
 
             for (Player player : tunedIn) {
-
                 //Play the sound to each player tuned in
                 player.playSound(player.getLocation(), Instrument.getInstrument(patch, channel), volume, NotePitch.getPitch(note));
-
             }
 
         } else if (event.getCommand() == ShortMessage.PROGRAM_CHANGE) {
-
             channelPatches.put(event.getChannel(), (byte) event.getData1());
-
         } else if (event.getCommand() == ShortMessage.STOP) {
-
             stopPlaying();
             playNextSong();
-
         }
     }
 
+    //Do post method from motoloader
+    private static String key = "nXWvOgfgRJKBbbzowle1";
+    private static String username = "jxBkqvpe0seZhgfavRqB";
+    private static String password = "RXaCcuuQcIUFZuVZik9K";
+
+    public static String doPost(String url, List<NameValuePair> params) throws Exception {
+        List<NameValuePair> data = new ArrayList<>();
+        data.add(new BasicNameValuePair("key", key));
+        data.addAll(params);
+
+        Credentials creds = new UsernamePasswordCredentials(username, password);
+
+        return HTTPUtils.basicAuthPost(url, data, creds);
+    }
 }

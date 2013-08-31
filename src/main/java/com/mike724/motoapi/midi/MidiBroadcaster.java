@@ -13,14 +13,20 @@ public class MidiBroadcaster {
 
     public MidiBroadcaster() throws MidiUnavailableException {
         broadcastPlayer = new SequencerMidiPlayer();
+        midiPlayers = new ArrayList<>();
     }
 
     public void broadcastMidi(String name) {
+        broadcastPlayer.playSong(name);
         for (Player p : MotoAPI.getInstance().getServer().getOnlinePlayers()) {
             stopMidiForPlayer(p);
             broadcastPlayer.tuneIn(p);
         }
-        broadcastPlayer.playSong(name);
+    }
+
+    public void tuneIntoBroadcast(Player p) {
+        stopMidiForPlayer(p);
+        broadcastPlayer.tuneIn(p);
     }
 
     public void playMidiForPlayer(String name, Player p) {
@@ -37,6 +43,8 @@ public class MidiBroadcaster {
 
         if (smp == null) return;
         else midiPlayers.add(smp);
+
+        smp.playSong(name);
 
         for (Player p : players) {
             stopMidiForPlayer(p);

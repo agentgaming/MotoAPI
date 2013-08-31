@@ -10,9 +10,7 @@ import org.bukkit.Sound;
  * @author t7seven7t
  */
 class Instrument {
-
     public static Sound getInstrument(int patch, int channel) {
-
         if (channel == 9) { // Drums - should actually be 10 but for some reason java makes it 9...
             return Sound.NOTE_BASS_DRUM;
         }
@@ -30,7 +28,5 @@ class Instrument {
         }
 
         return Sound.NOTE_PIANO;
-
     }
-
 }
