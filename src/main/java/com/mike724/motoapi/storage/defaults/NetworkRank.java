@@ -1,10 +1,11 @@
 package com.mike724.motoapi.storage.defaults;
 
+@SuppressWarnings("unused")
 public enum NetworkRank {
     USER(1),
     BUILDER(2),
-    MODERATOR(100),
-    ADMINISTRATOR(200),
+    MOD(100),
+    ADMIN(200),
     OWNER(1000);
 
     private final int permission;
