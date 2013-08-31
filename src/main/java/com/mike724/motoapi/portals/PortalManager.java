@@ -69,7 +69,7 @@ public class PortalManager implements Listener {
         for (Integer i : getPortals().keySet()) {
             ArrayList<Block> portal = getPortals().get(i);
             if (portal.contains(e.getTo().getBlock())) {
-                if (!inPortal.containsKey(e.getPlayer()) || inPortal.containsKey(e.getPlayer()) && inPortal.get(e.getPlayer()) == i) {
+                if (!inPortal.containsKey(e.getPlayer()) || inPortal.containsKey(e.getPlayer()) && inPortal.get(e.getPlayer()) != i) {
                     inPortal.put(e.getPlayer(), i);
                     Bukkit.getServer().getPluginManager().callEvent(new PortalEnterEvent(e.getPlayer(), i));
                 }
