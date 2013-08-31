@@ -19,7 +19,7 @@ public class PortalManager implements Listener {
 
     private BlockFace[] facesToCheck = {BlockFace.DOWN, BlockFace.UP, BlockFace.EAST, BlockFace.WEST, BlockFace.NORTH, BlockFace.SOUTH};
 
-    private ArrayList<Player> inPortal = new ArrayList<>();
+    private HashMap<Player, Integer> inPortal = new HashMap<>();
 
     public PortalManager() {
         portals = new HashMap<>();
@@ -69,12 +69,13 @@ public class PortalManager implements Listener {
         for (Integer i : getPortals().keySet()) {
             ArrayList<Block> portal = getPortals().get(i);
             if (portal.contains(e.getTo().getBlock())) {
-                if (!inPortal.contains(e.getPlayer())) {
-                    inPortal.add(e.getPlayer());
+                if (!inPortal.containsKey(e.getPlayer()) || inPortal.containsKey(e.getPlayer()) && inPortal.get(e.getPlayer()) == i) {
+                    inPortal.put(e.getPlayer(), i);
                     Bukkit.getServer().getPluginManager().callEvent(new PortalEnterEvent(e.getPlayer(), i));
                 }
                 break;
-            } else if (inPortal.contains(e.getPlayer())) inPortal.remove(e.getPlayer());
+            } else if (inPortal.containsKey(e.getPlayer()) && inPortal.get(e.getPlayer()) == i)
+                inPortal.remove(e.getPlayer());
         }
     }
 }
