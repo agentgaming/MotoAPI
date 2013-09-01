@@ -66,12 +66,8 @@ public class MotoPush {
         os.println(cmdStr);
     }
 
-    public void setType(ServerType t) {
-        cmd("settype", t.name());
-    }
-
-    public void setState(ServerState s) {
-        cmd("setstate", s.name());
+    public void setIdentity(ServerType t, ServerState s) {
+        cmd("setidentity", t.name(), s.name());
     }
 
     public JSONObject apiMethod(String method, String... args) {
