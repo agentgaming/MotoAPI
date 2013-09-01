@@ -124,7 +124,7 @@ public class MotoPush {
                 while ((line = is.readLine()) != null) {
                     String data = new String(line);
                     data = Security.decrypt(data, "9612/n1utzle//pa");
-                    MotoPushData mpd = gson.fromJson(data, MotoPushData.class);
+                    final MotoPushData mpd = gson.fromJson(data, MotoPushData.class);
                     if (mpd != null) {
                         //Call event sync
                         Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(MotoAPI.getInstance(), new Runnable() {
