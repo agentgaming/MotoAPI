@@ -97,7 +97,15 @@ public class MotoPush {
                     try {
                         connect();
                         isConnected = true;
-                        MotoAPI.getInstance().getServer().getPluginManager().callEvent(new MotoPushReconnect());
+
+                        //Call event sync
+                        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(MotoAPI.getInstance(), new Runnable() {
+                            @Override
+                            public void run() {
+                                MotoAPI.getInstance().getServer().getPluginManager().callEvent(new MotoPushReconnect());
+                            }
+                        });
+
                         Bukkit.getLogger().info("Successfully reconnected to motopush.");
                     } catch (IOException e1) {
                         connectionFailed();
@@ -117,8 +125,16 @@ public class MotoPush {
                     String data = new String(line);
                     data = Security.decrypt(data, "9612/n1utzle//pa");
                     MotoPushData mpd = gson.fromJson(data, MotoPushData.class);
-                    if (mpd != null)
-                        MotoAPI.getInstance().getServer().getPluginManager().callEvent(new MotoPushEvent(mpd));
+                    if (mpd != null) {
+                        //Call event sync
+                        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(MotoAPI.getInstance(), new Runnable() {
+                            @Override
+                            public void run() {
+                                MotoAPI.getInstance().getServer().getPluginManager().callEvent(new MotoPushEvent(mpd));
+                            }
+                        });
+
+                    }
                 }
             } catch (IOException e) {
             } catch (Exception e) {
