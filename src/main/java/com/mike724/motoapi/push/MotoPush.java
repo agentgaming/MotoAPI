@@ -131,9 +131,15 @@ public class MotoPush {
 
     //The connection has failed. That is not good. I'm not really sure if this is the best way to handle this.
     private void connectionFailed() {
-        for (Player p : MotoAPI.getInstance().getServer().getOnlinePlayers()) {
-            p.kickPlayer("Unable to connect to persistence server!");
-            isConnected = false;
-        }
+        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(MotoAPI.getInstance(), new Runnable() {
+            @Override
+            public void run() {
+                for (Player p : MotoAPI.getInstance().getServer().getOnlinePlayers()) {
+                    p.kickPlayer("Unable to connect to persistence server!");
+
+                }
+            }
+        });
+        isConnected = false;
     }
 }
