@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.mike724.motoapi.MotoAPI;
 import com.mike724.motoapi.storage.HTTPUtils;
 import org.apache.http.auth.UsernamePasswordCredentials;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import javax.net.ssl.SSLSocket;
@@ -29,7 +30,7 @@ public class MotoPush {
         os = new PrintStream(sslSocket.getOutputStream());
         is = new BufferedReader(new InputStreamReader(sslSocket.getInputStream()));
 
-        os.println("nXWvOgfgRJKBbbzowle1");
+        os.println("nXWvOgfgRJKBbbzowle1," + Bukkit.getServer().getPort());
 
         new Thread(handleMessages).start();
 
@@ -63,6 +64,14 @@ public class MotoPush {
         String cmdStr = ":" + cmd;
         for (String s : args) cmdStr += "," + s;
         os.println(cmdStr);
+    }
+
+    public void setType(ServerType t) {
+        cmd("settype", t.name());
+    }
+
+    public void setState(ServerState s) {
+        cmd("setstate", s.name());
     }
 
     public JSONObject apiMethod(String method, String... args) {
