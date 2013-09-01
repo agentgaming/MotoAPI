@@ -4,23 +4,21 @@ import com.amazonaws.util.json.JSONObject;
 import com.google.gson.Gson;
 import com.mike724.motoapi.MotoAPI;
 import com.mike724.motoapi.storage.HTTPUtils;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
+import java.io.*;
 import java.net.Socket;
 
 public class MotoPush {
     private String apiKey;
     private SSLSocket sslSocket;
     private BufferedReader is;
-    private PrintStream os;
+    private BufferedWriter os;
     private Gson gson = new Gson();
     private Boolean isConnected = true;
 
@@ -39,10 +37,11 @@ public class MotoPush {
                 socket.getInetAddress().getHostAddress(),
                 socket.getPort(),
                 true);
-        os = new PrintStream(sslSocket.getOutputStream());
+        os = new BufferedWriter(new OutputStreamWriter(sslSocket.getOutputStream()));
         is = new BufferedReader(new InputStreamReader(sslSocket.getInputStream()));
 
-        os.println("nXWvOgfgRJKBbbzowle1," + Bukkit.getServer().getPort());
+        os.write("nXWvOgfgRJKBbbzowle1," + Bukkit.getServer().getPort() + "\n");
+        os.flush();
     }
 
     public Boolean isConnected() {
@@ -51,17 +50,24 @@ public class MotoPush {
 
     public void push(MotoPushData data) {
         try {
-            String json = Security.encrypt(new String(gson.toJson(data).getBytes()), "9612/n1utzle//pa");
-            os.println(json);
+            String json = Security.encrypt(Base64.encodeBase64String(gson.toJson(data).getBytes()), "9612/n1utzle//pa");
+            os.write(json + "\n");
+            os.flush();
             //if this exception is called the data is not valid so ignore it
         } catch (Exception ignored) {
+            ignored.printStackTrace();
         }
     }
 
     public void cmd(String cmd, String... args) {
         String cmdStr = ":" + cmd;
         for (String s : args) cmdStr += "," + s;
-        os.println(cmdStr);
+        try {
+            os.write(cmdStr + "\n");
+            os.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void setIdentity(ServerType t, ServerState s) {
@@ -87,7 +93,8 @@ public class MotoPush {
 
             while (reconnect) {
                 try {
-                    sslSocket.getOutputStream().write("::ping\n".getBytes());
+                    os.write("::ping\n");
+                    os.flush();
                     isConnected = true;
                     Thread.sleep(5000);
                 } catch (InterruptedException e) {
@@ -106,7 +113,7 @@ public class MotoPush {
                             }
                         });
 
-                        Bukkit.getLogger().info("Successfully reconnected to motopush.");
+                        Bukkit.getLogger().info("Successfully reconnected to MotoPush.");
                     } catch (IOException e1) {
                         connectionFailed();
                     }
@@ -120,10 +127,16 @@ public class MotoPush {
         @Override
         public void run() {
             String line;
+
             try {
                 while ((line = is.readLine()) != null) {
-                    String data = new String(line);
-                    data = Security.decrypt(data, "9612/n1utzle//pa");
+                    String data = null;
+                    try {
+                        data = Security.decrypt(line, "9612/n1utzle//pa");
+                    } catch (Exception e) {
+                        continue;
+                    }
+                    data = new String(Base64.decodeBase64(data));
                     final MotoPushData mpd = gson.fromJson(data, MotoPushData.class);
                     if (mpd != null) {
                         //Call event sync
@@ -137,8 +150,9 @@ public class MotoPush {
                     }
                 }
             } catch (IOException e) {
-            } catch (Exception e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
+
         }
     };
 
