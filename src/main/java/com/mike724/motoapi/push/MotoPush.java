@@ -27,15 +27,9 @@ public class MotoPush {
     public MotoPush() throws IOException {
         connect();
 
-        os = new PrintStream(sslSocket.getOutputStream());
-        is = new BufferedReader(new InputStreamReader(sslSocket.getInputStream()));
-
-        os.println("nXWvOgfgRJKBbbzowle1," + Bukkit.getServer().getPort());
-
         new Thread(handleMessages).start();
 
         new Thread(ping).start();
-
     }
 
     private void connect() throws IOException {
@@ -45,6 +39,10 @@ public class MotoPush {
                 socket.getInetAddress().getHostAddress(),
                 socket.getPort(),
                 true);
+        os = new PrintStream(sslSocket.getOutputStream());
+        is = new BufferedReader(new InputStreamReader(sslSocket.getInputStream()));
+
+        os.println("nXWvOgfgRJKBbbzowle1," + Bukkit.getServer().getPort());
     }
 
     public Boolean isConnected() {
@@ -98,6 +96,9 @@ public class MotoPush {
                 } catch (IOException e) {
                     try {
                         connect();
+                        isConnected = true;
+                        MotoAPI.getInstance().getServer().getPluginManager().callEvent(new MotoPushReconnect());
+                        Bukkit.getLogger().info("Successfully reconnected to motopush.");
                     } catch (IOException e1) {
                         connectionFailed();
                     }
@@ -127,15 +128,14 @@ public class MotoPush {
 
     //The connection has failed. That is not good. I'm not really sure if this is the best way to handle this.
     private void connectionFailed() {
+        isConnected = false;
         Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(MotoAPI.getInstance(), new Runnable() {
             @Override
             public void run() {
                 for (Player p : MotoAPI.getInstance().getServer().getOnlinePlayers()) {
                     p.kickPlayer("Unable to connect to persistence server!");
-
                 }
             }
         });
-        isConnected = false;
     }
 }
