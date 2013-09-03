@@ -15,6 +15,7 @@ public class NetworkPlayer {
         this.isBanned = isBanned;
         this.rank = rank;
         this.joinDate = joinDate;
+        this.friends = new ArrayList<>();
     }
 
     public NetworkPlayer(String player) {
