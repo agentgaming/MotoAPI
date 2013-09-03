@@ -7,6 +7,7 @@ import com.amazonaws.services.dynamodbv2.model.*;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.gson.Gson;
+import com.mike724.motoapi.storage.defaults.NetworkPlayer;
 import org.apache.http.NameValuePair;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -74,6 +75,9 @@ public class Storage {
         }
         HashMap<Object, String> save = new HashMap<>();
         for (Object obj : cache.get(key).values()) {
+            if(obj instanceof NetworkPlayer) {
+                continue;
+            }
             save.put(obj, key);
         }
         rawStorage.writeObjects(save);
@@ -91,6 +95,9 @@ public class Storage {
         HashMap<Object, String> save = new HashMap<>();
         for (String name : cache.keySet()) {
             for (Object obj : cache.get(name).values()) {
+                if(obj instanceof NetworkPlayer) {
+                    continue;
+                }
                 save.put(obj, name);
             }
         }
