@@ -1,6 +1,5 @@
 package com.mike724.motoapi.push;
 
-import com.amazonaws.util.json.JSONObject;
 import com.google.gson.Gson;
 import com.mike724.motoapi.MotoAPI;
 import com.mike724.motoapi.storage.HTTPUtils;
@@ -74,13 +73,14 @@ public class MotoPush {
         cmd("setidentity", t.name(), s.name());
     }
 
-    public JSONObject apiMethod(String method, String... args) {
+    public String apiMethod(String method, String... args) {
         String url = "https://agentgaming.net:8115/" + method;
         for (String s : args) url += "/" + s;
         try {
             String out = HTTPUtils.basicAuth(url, new UsernamePasswordCredentials("jxBkqvpe0seZhgfavRqB", "RXaCcuuQcIUFZuVZik9K"));
-            return new JSONObject(out);
+            return out;
         } catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
     }

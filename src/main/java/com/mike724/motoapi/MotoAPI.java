@@ -10,6 +10,7 @@ public class MotoAPI extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
+
         this.getLogger().info("MotoAPI Enabled");
     }
 
