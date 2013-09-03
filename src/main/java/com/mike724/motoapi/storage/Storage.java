@@ -80,7 +80,9 @@ public class Storage {
             }
             save.put(obj, key);
         }
-        rawStorage.writeObjects(save);
+        if(!save.isEmpty()) {
+            rawStorage.writeObjects(save);
+        }
         if (!keepCache) {
             cache.remove(key);
         }
