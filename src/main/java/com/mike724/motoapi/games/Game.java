@@ -1,5 +1,8 @@
 package com.mike724.motoapi.games;
 
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+
 public class Game implements Runnable {
 
     private String displayName;
@@ -32,6 +35,11 @@ public class Game implements Runnable {
         if(current != null) {
             current.endState();
         }
+    }
+
+    /** Announces the given message with a universal format */
+    public void announce(String message) {
+        Bukkit.broadcastMessage(ChatColor.DARK_RED+""+ChatColor.BOLD+"["+displayName+"] "+ChatColor.WHITE+message);
     }
 
     @Override
