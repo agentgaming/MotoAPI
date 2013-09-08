@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
 import java.util.*;
 
 @SuppressWarnings("unused")
-public class TeamManager extends PlayerManager {
+public class TeamManager implements PlayerManager {
 
     private HashMap<TeamMeta, List<Player>> teams;
 
