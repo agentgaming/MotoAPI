@@ -1,5 +1,6 @@
 package com.mike724.motoapi.games;
 
+import com.mike724.motoapi.MapUtil;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -11,6 +12,20 @@ public class TeamManager implements PlayerManager {
 
     public TeamManager() {
         teams = new HashMap<>();
+    }
+
+    public String toString() {
+        String s = "";
+        for (Map.Entry<TeamMeta, List<Player>> entry : teams.entrySet()) {
+            TeamMeta meta = entry.getKey();
+            s += "##### "+meta.getName()+"\n";
+            for(Player p : entry.getValue()) {
+                // ADD GET NAME WHEN SWITCH BACK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                s += "## "+p+"\n";
+            }
+            s += "##### \n";
+        }
+        return s;
     }
 
     public List<Player> getTeam(String name) {
@@ -58,19 +73,21 @@ public class TeamManager implements PlayerManager {
         //Shuffle player list
         Collections.shuffle(players);
 
-        //Sorted map, keys will go in ascending order (player count on that team)
-        Map<Integer, TeamMeta> sorted = new TreeMap<>();
+        //Sorted map, keys will go in ascending order (player count on that team)\
+        HashMap<TeamMeta, Integer> map = new HashMap<>();
         for (Map.Entry<TeamMeta, List<Player>> entry : teams.entrySet()) {
-            sorted.put(entry.getValue().size(), entry.getKey());
+            map.put(entry.getKey(), entry.getValue().size());
         }
+
+        Map<TeamMeta, Integer> sorted = MapUtil.sortByValue(map);
 
         //foreach the player list and add each player to the team with the least players.
         for (Player p : players) {
             boolean added = false;
-            for (Map.Entry<Integer, TeamMeta> option : sorted.entrySet()) {
-                TeamMeta meta = option.getValue();
+            for (Map.Entry<TeamMeta, Integer> option : sorted.entrySet()) {
+                TeamMeta meta = option.getKey();
                 if (meta.hasPlayerLimit()) {
-                    if(option.getKey() < meta.getMaxPlayers()) {
+                    if(option.getValue() < meta.getMaxPlayers()) {
                         this.getTeam(meta).add(p);
                         added = true;
                     } else {
@@ -80,6 +97,11 @@ public class TeamManager implements PlayerManager {
                     this.getTeam(meta).add(p);
                     added = true;
                 }
+                //Increment and resort map
+                if(added) {
+                    map.put(meta, map.get(meta)+1);
+                    break;
+                }
             }
             if(!added) {
                 //We couldn't find them a team. This could happen if all
@@ -87,6 +109,8 @@ public class TeamManager implements PlayerManager {
                 //the player into a special "overflow" team instead of failing.
                 this.addTeam(new TeamMeta("overflow"));
                 this.getTeam("overflow").add(p);
+            } else {
+                sorted = MapUtil.sortByValue(map);
             }
         }
     }
@@ -113,5 +137,21 @@ public class TeamManager implements PlayerManager {
             all.addAll(team);
         }
         return (Player[]) all.toArray();
+    }
+}
+class ValueComparator implements Comparator<String> {
+
+    Map<String, Double> base;
+    public ValueComparator(Map<String, Double> base) {
+        this.base = base;
+    }
+
+    // Note: this comparator imposes orderings that are inconsistent with equals.
+    public int compare(String a, String b) {
+        if (base.get(a) >= base.get(b)) {
+            return -1;
+        } else {
+            return 1;
+        } // returning 0 would merge keys
     }
 }
