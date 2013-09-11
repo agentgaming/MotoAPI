@@ -4,6 +4,7 @@ import com.mike724.motoapi.MapUtil;
 import org.bukkit.entity.Player;
 
 import java.util.*;
+import java.util.Map;
 
 @SuppressWarnings("unused")
 public class TeamManager implements PlayerManager {
@@ -20,8 +21,7 @@ public class TeamManager implements PlayerManager {
             TeamMeta meta = entry.getKey();
             s += "##### "+meta.getName()+"\n";
             for(Player p : entry.getValue()) {
-                // ADD GET NAME WHEN SWITCH BACK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                s += "## "+p+"\n";
+                s += "## "+p.getName()+"\n";
             }
             s += "##### \n";
         }
@@ -75,7 +75,7 @@ public class TeamManager implements PlayerManager {
 
         //Sorted map, keys will go in ascending order (player count on that team)\
         HashMap<TeamMeta, Integer> map = new HashMap<>();
-        for (Map.Entry<TeamMeta, List<Player>> entry : teams.entrySet()) {
+        for (java.util.Map.Entry<TeamMeta, List<Player>> entry : teams.entrySet()) {
             map.put(entry.getKey(), entry.getValue().size());
         }
 
