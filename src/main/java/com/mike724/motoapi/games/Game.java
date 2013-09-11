@@ -16,6 +16,10 @@ public class Game implements Runnable {
         this.playerManager = playerManager;
     }
 
+    public PlayerManager getPlayerManager() {
+        return playerManager;
+    }
+
     public void startDefaultState() {
         startState(this.defaultState);
     }
