@@ -37,6 +37,15 @@ public class TeamManager implements PlayerManager {
         return null;
     }
 
+    public String[] getTeamNames() {
+        String[] names = new String[teams.size()];
+        int i = 0;
+        for(TeamMeta tm : teams.keySet()) {
+            names[i++] = tm.getName();
+        }
+        return names;
+    }
+
     public List<Player> getTeam(TeamMeta teamMeta) {
         return teams.get(teamMeta);
     }
@@ -53,6 +62,17 @@ public class TeamManager implements PlayerManager {
         List<Player> empty = new ArrayList<>();
         teams.put(teamMeta, empty);
         return this.getTeam(teamMeta);
+    }
+
+    public boolean onSameTeam(Player... playersArray) {
+        List<Player> players = Arrays.asList(playersArray);
+        for(String teamName : this.getTeamNames()) {
+            List<Player> team = this.getTeam(teamName);
+            if(team.containsAll(players)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
