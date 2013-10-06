@@ -36,20 +36,22 @@ public class Game implements Runnable {
 
     public void endCurrentState() {
         GameState current = this.getCurrentState();
-        if(current != null) {
+        if (current != null) {
             current.endState();
         }
     }
 
-    /** Announces the given message with a universal format */
+    /**
+     * Announces the given message with a universal format
+     */
     public void announce(String message) {
-        Bukkit.broadcastMessage(ChatColor.DARK_RED+""+ChatColor.BOLD+"["+displayName+"] "+ChatColor.WHITE+message);
+        Bukkit.broadcastMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "[" + displayName + "] " + ChatColor.WHITE + message);
     }
 
     @Override
     public void run() {
         GameState state = getCurrentState();
-        if(state != null) {
+        if (state != null) {
             state.loop();
         }
     }

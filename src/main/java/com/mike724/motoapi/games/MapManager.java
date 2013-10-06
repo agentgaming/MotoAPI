@@ -21,40 +21,40 @@ public class MapManager {
     }
 
     public void registerMap(String name, Map map) {
-        if(!registered.containsKey(name)) {
+        if (!registered.containsKey(name)) {
             registered.put(name, map);
         }
     }
 
     public void unregisterMap(String name) {
-        if(loaded.containsKey(name)) {
+        if (loaded.containsKey(name)) {
             loaded.remove(name);
         }
     }
 
     public boolean loadMap(String name) {
-        if(!registered.containsKey(name)) {
+        if (!registered.containsKey(name)) {
             return false;
         }
         Map m = this.registered.get(name);
         World w = new WorldCreator(name).createWorld();
-        if(w == null) {
+        if (w == null) {
             return false;
         } else {
             loaded.put(name, w);
-            if(m.isMapSavingEnabled()) {
+            if (m.isMapSavingEnabled()) {
                 w.setAutoSave(false);
             }
-            infoLog.info("Loaded map: "+name);
+            infoLog.info("Loaded map: " + name);
             return true;
         }
     }
 
     public boolean unloadMap(String name) {
-        if(loaded.containsKey(name)) {
+        if (loaded.containsKey(name)) {
             Map m = registered.get(name);
             Bukkit.unloadWorld(name, m.isMapSavingEnabled());
-            infoLog.info("Unloaded map: "+name);
+            infoLog.info("Unloaded map: " + name);
             return true;
         } else {
             return false;

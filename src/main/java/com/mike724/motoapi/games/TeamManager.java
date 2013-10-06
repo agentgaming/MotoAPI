@@ -19,9 +19,9 @@ public class TeamManager implements PlayerManager {
         String s = "";
         for (Map.Entry<TeamMeta, List<Player>> entry : teams.entrySet()) {
             TeamMeta meta = entry.getKey();
-            s += "##### "+meta.getName()+"\n";
-            for(Player p : entry.getValue()) {
-                s += "## "+p.getName()+"\n";
+            s += "##### " + meta.getName() + "\n";
+            for (Player p : entry.getValue()) {
+                s += "## " + p.getName() + "\n";
             }
             s += "##### \n";
         }
@@ -40,7 +40,7 @@ public class TeamManager implements PlayerManager {
     public String[] getTeamNames() {
         String[] names = new String[teams.size()];
         int i = 0;
-        for(TeamMeta tm : teams.keySet()) {
+        for (TeamMeta tm : teams.keySet()) {
             names[i++] = tm.getName();
         }
         return names;
@@ -66,9 +66,9 @@ public class TeamManager implements PlayerManager {
 
     public boolean onSameTeam(Player... playersArray) {
         List<Player> players = Arrays.asList(playersArray);
-        for(String teamName : this.getTeamNames()) {
+        for (String teamName : this.getTeamNames()) {
             List<Player> team = this.getTeam(teamName);
-            if(team.containsAll(players)) {
+            if (team.containsAll(players)) {
                 return true;
             }
         }
@@ -107,7 +107,7 @@ public class TeamManager implements PlayerManager {
             for (Map.Entry<TeamMeta, Integer> option : sorted.entrySet()) {
                 TeamMeta meta = option.getKey();
                 if (meta.hasPlayerLimit()) {
-                    if(option.getValue() < meta.getMaxPlayers()) {
+                    if (option.getValue() < meta.getMaxPlayers()) {
                         this.getTeam(meta).add(p);
                         added = true;
                     } else {
@@ -118,12 +118,12 @@ public class TeamManager implements PlayerManager {
                     added = true;
                 }
                 //Increment and resort map
-                if(added) {
-                    map.put(meta, map.get(meta)+1);
+                if (added) {
+                    map.put(meta, map.get(meta) + 1);
                     break;
                 }
             }
-            if(!added) {
+            if (!added) {
                 //We couldn't find them a team. This could happen if all
                 //teams have a limit and they are all full. Default to adding
                 //the player into a special "overflow" team instead of failing.
@@ -159,9 +159,11 @@ public class TeamManager implements PlayerManager {
         return (Player[]) all.toArray();
     }
 }
+
 class ValueComparator implements Comparator<String> {
 
     Map<String, Double> base;
+
     public ValueComparator(Map<String, Double> base) {
         this.base = base;
     }

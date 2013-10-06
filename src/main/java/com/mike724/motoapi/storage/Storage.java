@@ -75,12 +75,12 @@ public class Storage {
         }
         HashMap<Object, String> save = new HashMap<>();
         for (Object obj : cache.get(key).values()) {
-            if(obj instanceof NetworkPlayer) {
+            if (obj instanceof NetworkPlayer) {
                 continue;
             }
             save.put(obj, key);
         }
-        if(!save.isEmpty()) {
+        if (!save.isEmpty()) {
             rawStorage.writeObjects(save);
         }
         if (!keepCache) {
@@ -97,7 +97,7 @@ public class Storage {
         HashMap<Object, String> save = new HashMap<>();
         for (String name : cache.keySet()) {
             for (Object obj : cache.get(name).values()) {
-                if(obj instanceof NetworkPlayer) {
+                if (obj instanceof NetworkPlayer) {
                     continue;
                 }
                 save.put(obj, name);
