@@ -14,7 +14,7 @@ public class Map {
     private boolean mapSaving;
 
     public Map(File mapDir) throws Exception {
-        if(!mapDir.isDirectory() || !mapDir.exists()) {
+        if (!mapDir.isDirectory() || !mapDir.exists()) {
             throw new Exception("Map directory does not exist or is not a directory");
         }
         File json = new File(mapDir, MapManager.METADATA_FILE_NAME);
@@ -22,7 +22,7 @@ public class Map {
         BufferedReader br = new BufferedReader(fr);
         String jsonString = "";
         String line;
-        while((line = br.readLine()) != null) {
+        while ((line = br.readLine()) != null) {
             jsonString += line;
         }
         jsonString = jsonString.trim();
@@ -35,12 +35,11 @@ public class Map {
     public void readJSON(String jsonString) {
         Gson gson = new Gson();
 
-        //Read values
-        displayName = gson.fromJson(jsonString, String.class);
+        MapMeta meta = gson.fromJson(jsonString, MapMeta.class);
 
-        authors = gson.fromJson(jsonString, String[].class /*Dakota says this should work*/);
-
-        mapSaving = gson.fromJson(jsonString, Boolean.class);
+        displayName = meta.getDisplayName();
+        authors = meta.getAuthors();
+        mapSaving = meta.isSavingMap();
     }
 
     public String getDisplayName() {
