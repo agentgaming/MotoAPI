@@ -4,6 +4,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 
+import java.io.File;
+import java.io.FileFilter;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
@@ -13,11 +15,38 @@ public class MapManager {
     private Logger infoLog;
     private HashMap<String, Map> registered;
     private HashMap<String, World> loaded;
+    public final static String METADATA_FILE_NAME = "meta.json";
 
     public MapManager() {
         infoLog = Logger.getLogger("MapManager");
         registered = new HashMap<>();
         loaded = new HashMap<>();
+    }
+
+    public void registerAllInDirectory(File dir) {
+        if(dir.isDirectory()) {
+            File[] maps = dir.listFiles(new FileFilter() {
+                @Override
+                public boolean accept(File pathname) {
+                    if(pathname.isDirectory()) {
+                        return (new File(pathname, METADATA_FILE_NAME)).exists();
+                    }
+                    return false;
+                }
+            });
+            //Process maps/worlds
+            for(File map : maps) {
+                try {
+                    Map m = new Map(map);
+                    this.registerMap(map.getName(), m);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        } else {
+            //Has to be a directory.
+            return;
+        }
     }
 
     public void registerMap(String name, Map map) {
